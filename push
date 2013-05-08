@@ -16,7 +16,7 @@ cp -r $CWD/_site/* $CRICCOMINI_GITHUB_IO
 cd $CRICCOMINI_GITHUB_IO
 echo "== Committing changes =="
 git add .
-git commit -am"release $(date)"
+git commit -am"Release $(date)"
 echo "== Pushing changes =="
 git push
 echo "== Push successufl =="
