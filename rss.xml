@@ -7,6 +7,69 @@
 		<atom:link href="http://riccomini.name/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Using YARN with Cgroups</title>
+				<description>&lt;h5&gt;Introduction&lt;/h5&gt;
+&lt;p&gt;I&amp;#8217;m still a novice with Cgroups, but I thought it would be worth documenting how to set &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; up with them, since there seems to be a surprising lack of documentation on how to get this stuff going. I&amp;#8217;m going to show you how to:&lt;/p&gt;
+
+	&lt;ol&gt;
+		&lt;li&gt;Check if Cgroups is installed on your machine&lt;/li&gt;
+		&lt;li&gt;Configure &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; to run use Cgroups&lt;/li&gt;
+	&lt;/ol&gt;&lt;p&gt;Note that this tutorial is written based on a &lt;span class=&quot;caps&quot;&gt;RHEL&lt;/span&gt; 6 environment. You won&amp;#8217;t be able to use the CGroup features unless you&amp;#8217;re on Linux.&lt;/p&gt;
+&lt;h5&gt;What are Cgroups?&lt;/h5&gt;
+&lt;p&gt;Cgroups are a Linux kernel module that allow you to control resource usage (&lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt;, disk, etc) at a per-process level, to provide performance guarantees when running in a shared environment.&lt;/p&gt;
+&lt;p&gt;The two best places to get a high level view of Cgroups are:&lt;/p&gt;
+
+	&lt;ul&gt;
+		&lt;li&gt;&lt;a href=&quot;https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt&quot;&gt;https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt&lt;/a&gt;&lt;/li&gt;
+		&lt;li&gt;&lt;a href=&quot;https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/pdf/Resource_Management_Guide/Red_Hat_Enterprise_Linux-6-Resource_Management_Guide-en-US.pdf&quot;&gt;Red Hat Enterprise Linux 6 Resource Management Guide&lt;/a&gt;&lt;/li&gt;
+		&lt;li&gt;&lt;a href=&quot;https://wiki.archlinux.org/index.php/Cgroups&quot;&gt;https://wiki.archlinux.org/index.php/Cgroups&lt;/a&gt;&lt;/li&gt;
+		&lt;li&gt;&lt;a href=&quot;http://en.wikipedia.org/wiki/Cgroups&quot;&gt;http://en.wikipedia.org/wiki/Cgroups&lt;/a&gt;&lt;/li&gt;
+	&lt;/ul&gt;&lt;p&gt;&lt;strong&gt;You should definitely read the first two documents, which are the kernel documentation, and &lt;span class=&quot;caps&quot;&gt;RHEL&lt;/span&gt; 6 documentation for Cgroups. The remainder of the post assumes you&amp;#8217;ve read these documents.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Currently (as of 2.0.5-alpha), &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; only supports Cgroups &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; isolation (using a property called cpu.shares, which I&amp;#8217;ll get into later). There are future plans to add more features to the &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; isolation (in 2.1.0-beta; &lt;a href=&quot;https://issues.apache.org/jira/browse/YARN-600&quot;&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-610&lt;/a&gt;, &lt;a href=&quot;https://issues.apache.org/jira/browse/YARN-799&quot;&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-799&lt;/a&gt;, &lt;a href=&quot;https://issues.apache.org/jira/browse/YARN-810&quot;&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-810&lt;/a&gt;), and also support other resources, such as disk, and network.&lt;/p&gt;
+&lt;h5&gt;Setting up Cgroups&lt;/h5&gt;
+&lt;p&gt;Cgroups is fairly OS-specific, so you&amp;#8217;ll need to do research into whether your particular OS and Kernel have Cgroups setup and installed. For this tutorial, I used &lt;span class=&quot;caps&quot;&gt;RHEL&lt;/span&gt; 6 with the following kernel:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784586.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Ubuntu also has Cgroup support rolled into it (See &lt;a href=&quot;http://www.docker.io/&quot;&gt;Docker&lt;/a&gt;). You can verify whether Cgroups is installed by checking if /proc/cgroups exists.&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784621.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Another way to check if Cgroups exist is by looking for the mount point where Cgroups end up. In &lt;a href=&quot;https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/pdf/Resource_Management_Guide/Red_Hat_Enterprise_Linux-6-Resource_Management_Guide-en-US.pdf&quot;&gt;&lt;span class=&quot;caps&quot;&gt;RHEL&lt;/span&gt; 6&lt;/a&gt;, this defaults to /cgroup. The mount point might also be in /sys/fs/cgroup on other setups.&lt;/p&gt;
+&lt;p&gt;You&amp;#8217;ll probably also want to install libcgroup, which comes with some handy tools (as mentioned in the &lt;span class=&quot;caps&quot;&gt;RHEL&lt;/span&gt; 6 documents, linked above).&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784697.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Finally, you&amp;#8217;ll want to setup a &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; directory inside the Cgroup root folder (if one doesn&amp;#8217;t already exist), so &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; can use it to mount its &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; hierarchies.&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784740.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Once you&amp;#8217;ve established that Cgroups is installed (or installed it), and configured the &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; directory, it&amp;#8217;s time to setup YARN&amp;#8217;s NM and RM to use it.&lt;/p&gt;
+&lt;h5&gt;Setting up &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; with Cgroups&lt;/h5&gt;
+&lt;p&gt;To use &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; with CGroups, all you really need to do is configure it to use the LinuxContainerExecutor (&lt;span class=&quot;caps&quot;&gt;LCE&lt;/span&gt;), instead of the DefaultContainerExecutor, that ships with it out of the box. Once you configure the &lt;span class=&quot;caps&quot;&gt;LCE&lt;/span&gt;, you just need to flip a few switches to get the &lt;span class=&quot;caps&quot;&gt;LCE&lt;/span&gt; using Cgroups.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;To setup &lt;span class=&quot;caps&quot;&gt;LCE&lt;/span&gt; for &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;, start by reading &lt;a href=&quot;http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html&quot;&gt;Hadoop MapReduce Next Generation &amp;#8211; Cluster Setup&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In your yarn-site.xml, you need to add the following configurations:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784750.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Make sure to set the last configuration value according to the group that your &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; users will run under (e.g. hadoop).&lt;/p&gt;
+&lt;p&gt;You&amp;#8217;ll probably also want to configure the &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; NM to support more than one virtual core. By default, the NM only allows one virtual core to be used.&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784838.js&quot;&gt; &lt;/script&gt;&lt;p&gt;All this is doing is mapping some number of virtual cores to your machine&amp;#8217;s physical cores. This is useful because it lets you run different kinds of machines in the same &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; cluster (e.g. some with CPUs that are 2x as fast as others), and still have a standard &amp;#8220;core&amp;#8221; that developers can use to reason about how much &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; they need.&lt;/p&gt;
+&lt;p&gt;Setup your container-executor, and container-executor.cfg file (see the &lt;a href=&quot;http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html&quot;&gt;ClusterSetup&lt;/a&gt; link for details):&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5785070.js&quot;&gt; &lt;/script&gt;&lt;p&gt;Finally, if you&amp;#8217;re running &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; 2.0.5-beta, or prior, you&amp;#8217;ll need to patch your hadoop-yarn-server-nodemanager-2.0.5-alpha.jar with &lt;a href=&quot;https://issues.apache.org/jira/browse/YARN-600&quot;&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-600&lt;/a&gt;, which actually updates cpu.shares with the proper percentage.&lt;/p&gt;
+&lt;p&gt;Now, when you turn on the &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; RM and NM, your jobs can use Cgroups!&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784890.js&quot;&gt; &lt;/script&gt;&lt;h5&gt;Example&lt;/h5&gt;
+&lt;p&gt;By default, containers will use one virtual core, which means that they&amp;#8217;ll all get /cgroup/cpu/hadoop-yarn/container_id/cpu.shares set to 1024. You can experiment with these files pretty easily, and see how Cgroups works.&lt;/p&gt;
+&lt;p&gt;Start a single &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; container. Make the code in this containers just spin to waste &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt;. I was having my containers hash random strings in a loop.&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784924.js&quot;&gt; &lt;/script&gt;&lt;p&gt;When you run `top`, you should see that the process is using nearly 100% of a single core. This might be surprising to you if you&amp;#8217;re running more than one virtual core per physical core. For example, if you had a pcore:vcore ratio of 1:2, wouldn&amp;#8217;t you expect a single container to get at most 50% of a core? As it turns out, Cgroups defaults to being optimistic. It lets you use as much &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; is available, and only begins throttling things back when the &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; is 100% utilized. Have a look at this &lt;a href=&quot;http://lwn.net/Articles/336127/&quot;&gt;&lt;span class=&quot;caps&quot;&gt;RFC&lt;/span&gt;&lt;/a&gt; for details. This can be changed using Linux&amp;#8217;s completely fair scheduler (see &lt;a href=&quot;https://issues.apache.org/jira/browse/YARN-810&quot;&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-810&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;To continue the test, run 1 more container than you have cores on your machine (in this example, my machine has 8 cores, so I run a total of 9 containers). When you run `top`, you should see that all processes are fighting for &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; with roughly the same &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; usage for each process.&lt;/p&gt;
+&lt;p&gt;To activate Cgroups manually, run this command for one of your containers:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784941.js&quot;&gt; &lt;/script&gt;&lt;p&gt;What we&amp;#8217;ve just done is assign a very small fraction of the total &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; available to the &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; NM (10 / (10 + 8 * 1024) = .1%) to container_1371055675984_0001_01_000002.&lt;/p&gt;
+&lt;p&gt;If you run `top`, you should now see something like this:&lt;/p&gt;
+&lt;script src=&quot;https://gist.github.com/5784993.js&quot;&gt; &lt;/script&gt;&lt;p&gt;As you can see, the &lt;span class=&quot;caps&quot;&gt;CPU&lt;/span&gt; usage for &lt;span class=&quot;caps&quot;&gt;PID&lt;/span&gt; 16708 is at 2.3%, while all of the others are maxing out near 100%! If you were to set the cpu.shares back to 1024, you&amp;#8217;d see that the process once again gets its fair share.&lt;/p&gt;
+&lt;h5&gt;CGroups in Code&lt;/h5&gt;
+&lt;p&gt;Now that we&amp;#8217;ve shown that Cgroups can work manually, you&amp;#8217;ll probably want to update your &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; code to actually use them. This part is pretty trivial. You just need to call the setVirtualCores method on the &lt;a href=&quot;http://hadoop.apache.org/docs/current/api/org/apache/hadoop/yarn/api/records/Resource.html&quot;&gt;Resource&lt;/a&gt; class when making container resource requests in &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Make sure that whatever you request is within the minimum and maximum vcore boundaries defined in &lt;a href=&quot;http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-common/yarn-default.xml&quot;&gt;yarn-default.xml&lt;/a&gt;.&lt;/p&gt;
+&lt;h5&gt;Bumps in the Road&lt;/h5&gt;
+&lt;p&gt;Here are some problems that I encountered, along the way.&lt;/p&gt;
+
+	&lt;ol&gt;
+		&lt;li&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; was not updating cpu.shares. This is fixed in &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-600.&lt;/li&gt;
+		&lt;li&gt;Invalid argument exception when AM starts up. This is triggered by the container-executor, and is fixed in &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-799.&lt;/li&gt;
+		&lt;li&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; AM was failing to localize. This is because the usercache directory that &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; uses was owned by the &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; NM username. When switching to &lt;span class=&quot;caps&quot;&gt;LCE&lt;/span&gt;, that directory must be owned by the user running the job. Deleting usercache entirely and restarting the &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; NMs solved the problem.&lt;/li&gt;
+		&lt;li&gt;&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; ignoring my container-executor.cfg file. It turns out that, by default, container-executor is hard-coded to use ../etc/hadoop/container-executor.cfg. If you want to put your container-executor elsewhere, you&amp;#8217;ll need to re-build container executor.&lt;/li&gt;
+	&lt;/ol&gt;&lt;script src=&quot;https://gist.github.com/5785113.js&quot;&gt; &lt;/script&gt;&lt;p&gt;When running the code initially, I was getting an &amp;#8220;invalid argument&amp;#8221; error when my &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; AM started. This turns out to be triggered when &lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt; tries to write to /cgroup/cpu/hadoop-yarn/container_id/cgroup.procs. This file was initially read-only, and only recently, in the Linux kernel, has it become read-write. There is a Jira open (&lt;span class=&quot;caps&quot;&gt;YARN&lt;/span&gt;-799) to resolve this.&lt;/p&gt;</description>
+				<pubDate>Fri, 14 Jun 2013 00:00:00 -0700</pubDate>
+				<link>http://riccomini.name/posts/hadoop/2013-06-14-yarn-with-cgroups</link>
+				<guid isPermaLink="true">http://riccomini.name/posts/hadoop/2013-06-14-yarn-with-cgroups</guid>
+			</item>
+		
+			<item>
 				<title>Tech Exits: What You Should Know</title>
 				<description>&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;DISCLAIMER&lt;/span&gt;&lt;/h5&gt;
 &lt;p&gt;I am not an expert in any of these areas. This is just a list of things that I&amp;#8217;ve heard, or discussed with people, over the years. This is not meant to substitute the advice of a financial advisor. This post does not reflect the view of my employer, or of anyone other than myself.&lt;/p&gt;
@@ -1279,80 +1342,6 @@ api_version: 1&lt;/code&gt;&lt;/pre&gt;
 				<pubDate>Thu, 26 Nov 2009 00:00:00 -0800</pubDate>
 				<link>http://riccomini.name/posts/python/2009-11-26-app-engine-facebook-connect</link>
 				<guid isPermaLink="true">http://riccomini.name/posts/python/2009-11-26-app-engine-facebook-connect</guid>
-			</item>
-		
-			<item>
-				<title>Sorting Reducer Input Values in Hadoop</title>
-				<description>&lt;p&gt;I &lt;span class=&quot;caps&quot;&gt;HIGHLY&lt;/span&gt; recommend that you read the email thread by &lt;a href=&quot;http://markmail.org/message/7gonm3kiasyh2xnf#query:setOutputKeyComparatorClass+page:3+mid:esn3lgzyx3ag26cy+state:results&quot;&gt;Owen O&amp;#8217;Malley&lt;/a&gt; that describes this technique in brief. I should also note that this example is using the 0.18 Hadoop &lt;span class=&quot;caps&quot;&gt;API&lt;/span&gt;.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;PROBLEM&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;STATEMENT&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;Suppose we have a file with a bunch of comma/line separated letters:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;l,f,a,e,a,a,l
-f,g,b,c,b,d,f
-x,i,t,u,f,e,h
-...etc&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We want our reducer to receive bigrams (lf, fa, ae, ea, aa, al, etc), but partitioned by the first letter, and sorted (ascending) by the second. For example, for the letter a, the reducer should receive:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;lt;a, [l,e,a]&amp;gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is actually somewhat difficult to do, since we want to partition by key, but sort the reducer&amp;#8217;s values iterator. The trick is to have the mapper output the bigram in the key, and only the second letter in the value. For the example above, the mapper would emit:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;lt;ae, e&amp;gt;
-&amp;lt;aa, a&amp;gt;
-&amp;lt;al, l&amp;gt;
-...&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can then use a custom partitioner/sorter to partition and sort according to our needs.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;SORTING&lt;/span&gt; BY &lt;span class=&quot;caps&quot;&gt;VALUE&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;To sort Hadoop&amp;#8217;s mapper output by value, you need to set three settings in your JobConf:&lt;/p&gt;
-&lt;ul&gt;
-	&lt;li&gt;setPartitionerClass&lt;/li&gt;
-	&lt;li&gt;setOutputValueGroupingComparator&lt;/li&gt;
-	&lt;li&gt;setOutputKeyComparatorClass&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;There are many threads that say that you can&amp;#8217;t sort by value in Hadoop. This is true. What you can do, instead, is have your mapper output all data in the key, rather than the value. Then you can use a specialized Partitioner classes and two RawComparator classes to sort and partition your map output properly.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;PARTITIONER&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;The first class that you need to set is a class that extends org.apache.hadoop.mapred.Partitioner. This class has a single function that determines which partition your map output should go to. This means that you can&amp;#8217;t go below 0, or above numPartitions &amp;#8211; 1. Mostly, you&amp;#8217;ll want to hashCode() some portion of your key and mod it by numPartitions.&lt;/p&gt;
-&lt;p&gt;In our example, the partitioner will partition by the first letter of the key.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;OUTPUT&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;VALUE&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;GROUPING&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;COMPARATOR&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;The OutputValueGroupingComparator JobConf setting takes in a org.apache.hadoop.io.RawComparator. This RawComparator is used to determine which reducer the mapper output row should go to. This RawComparator does not sort a reducer&amp;#8217;s value iterator. Instead, it&amp;#8217;s used to sort reducer input, so that the reducer knows when a new grouping starts.&lt;/p&gt;
-&lt;p&gt;In our example, the value grouping comparator will sort by the first letter of the key.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;OUTPUT&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;COMPARATOR&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;The OutputKeyComparatorClass JobConf setting also takes in a org.apache.hadoop.io.RawComparator. This RawComparator is used to sort the values iterator that the reducer gets, which is what we want. It should be noted, that although the RawComparator is used to sort the values iterator, the data that gets passed into the comparator is the mapper key output. This is the reason that we must put all data in the key as well as the value.&lt;/p&gt;
-&lt;p&gt;A &lt;strong&gt;very&lt;/strong&gt; important thing to note is that they key compartor must also enforce the value grouping comparator&amp;#8217;s rules. In our example, this means that it must first check if the first letter is equal. If it&amp;#8217;s not equal, it should return the same ruls as the value comparator. Only if the first letter of the key is equal should we apply our value-level sorting (comparing the second letter). If you do not do this, you will break your grouping.&lt;/p&gt;
-&lt;p&gt;In our example, the key comparator will sort by the second letter of the key.&lt;/p&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;RUNNING&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;THE&lt;/span&gt; &lt;span class=&quot;caps&quot;&gt;JOB&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;Now, all we need to do is run the job.&lt;/p&gt;
-&lt;script src=&quot;https://gist.github.com/3775858.js&quot;&gt; &lt;/script&gt;&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;OUTPUT&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;As you can see, the reducer input is grouped by the first letter (our logical key), and the values are sorted ascending.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;AY: YWUTSSSRRQPPPPOMMKJIIIFB
-BZ: ZYYXXXWVUUURRRRQPPPPPPOONMMLLKJHGEEDDBB
-CZ: ZZZZZYYXXWVUUUTSSSRQQOOMKKKHHHGGFFDDCCCBB
-DY: YXWWSSQQPPPONMMKIHGEDDCCBB
-EW: WVUTRRRQPOOOOONMLLKKKJJHFEEDDCCBA
-FY: YXXXWVVVUUTSSRPNNNLLKJHGFFECBBBBA
-GZ: ZZYXVTSQQPOONLJIHHHFFCCCBBA
-HZ: ZYYYYXWVUUTTTRQQPOOMKJJIIIGFEDAAAA
-IY: YYYXWWVVVUTTSRRRQMKJJJIIIHGGFFEEEECBBBA
-JZ: ZZYYXXWRRRQPPOOOMLJJIIHHHHCCCBBA
-KZ: ZZYXWWVSSSSRQONMJIIHFEDB
-LZ: ZZZYYXXWUTRQQQPLKJIIIHHGGFDDCCCBBBAA
-MZ: ZZYYYWTTTSSQQQQOJIIIHGGFCCCBBAA
-NZ: ZZYYXVVUTSSSSRQPNMKIHGFFFECAA
-OZ: ZZZYYXWWUSRRPPOONNNMMLJIIHHHGGFEEEDDCCBA
-PZ: ZXXWWTSSSSSRRRQQQMMLLLKJIIIHEEDCBA
-QZ: ZZYXWWWWWWVVVUTTSSSSRRRRQQQPOOONMLKJIHHFDD
-RY: YYYXXXWVUURRQQPPOOOLLLLLLKJJJJHHHHGFFEEEDDCCCBAA
-SY: YXWWWVVVUUUTTSRRRQQQNNNMLJHHHGGGGFEDDCCCBB
-TZ: ZZYYYYXXWVTTTTSRRQPPONNNNMMLLJIIIICBB
-UZ: ZZZYXWWVVVSRRRQPPONMHHGEDCBBA
-VZ: ZYWVVUTTTQPPPOOMKIIGFEEDDCCCBB
-WX: XWWWVUTTSSSRRPNNNMMLLKKKKKJJIGEDAAAA
-XZ: ZZYXXXXSSRRQQOOMLLKKJIIIIHGFFEDDBA
-YZ: ZZZYXWWVUUUTTTSSRQPPPOONNNMLJIIFFFFEDCCCAA
-ZZ: ZYYWVVUUTSSSSRRQQQPOONMMLLLJJIIGFDBBBA&lt;/code&gt;&lt;/pre&gt;
-&lt;h5&gt;&lt;span class=&quot;caps&quot;&gt;LINKS&lt;/span&gt;&lt;/h5&gt;
-&lt;p&gt;&lt;a href=&quot;http://markmail.org/message/7gonm3kiasyh2xnf#query:setOutputKeyComparatorClass+page:3+mid:esn3lgzyx3ag26cy+state:results&quot;&gt;Owen O&amp;#8217;Malley&amp;#8217;s Value Sorting Email&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;http://issues.apache.org/jira/secure/attachment/12356648/485.patch&quot;&gt;Hadoop Value Grouping Example Patch&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&quot;https://issues.apache.org/jira/browse/HADOOP-4545&quot;&gt;Secondary Sort Hadoop Example&lt;/a&gt;&lt;/p&gt;</description>
-				<pubDate>Fri, 13 Nov 2009 00:00:00 -0800</pubDate>
-				<link>http://riccomini.name/posts/hadoop/2009-11-13-sort-reducer-input-value-hadoop</link>
-				<guid isPermaLink="true">http://riccomini.name/posts/hadoop/2009-11-13-sort-reducer-input-value-hadoop</guid>
 			</item>
 		
 	</channel>
