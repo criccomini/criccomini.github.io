@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Google App Engine and Facebook Connect</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/blog.css">
+        <script src="/js/vendor/modernizr-2.6.1.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+        
+        <div class="content">
+          <div class="col">
+            <div class="text-blob" style="background-color: #34424D; color: white;">
+              <div style="font-size: 2em; text-align: center;">
+                <a style="color: white; text-decoration: none;" href="/">riccomini.name</a>
+              </div>
+            </div>
+            <div class="text-blob">
+              <a title="BlackBerry Storm, GPS, etc." href="/posts/blackberry">BlackBerry</a> <span style="color: #bbb;">7</span><br/>
+              <a title="Data visualization and infographics" href="/posts/data-visualization">Data Visualization</a> <span style="color: #bbb;">1</span><br/>
+              <a title="iPhone, Python, Operations, and Sports" href="/posts/game-time-baby">Game Time, Baby!</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Hadoop, Map/Reduce, Pig, and Hive" href="/posts/hadoop">Hadoop</a> <span style="color: #bbb;">5</span><br/>
+              <a title="iPhone Objective C, and tutorials" href="/posts/iphone">iPhone</a> <span style="color: #bbb;">2</span><br/>
+              <a title="Kafka, stream processing, Storm, and S4" href="/posts/kafka">Kafka</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Linux, and BASH" href="/posts/linux">Linux</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Python, PyFacebook, and Google App Engine" href="/posts/python">Python</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Twitter, Facebook, and LinkedIn" href="/posts/social">Social</a> <span style="color: #bbb;">5</span>
+            </div>
+            <div class="text-blob">
+              <h4>Who</h4>
+
+              <p>I am a software engineer in Silicon Valley.</p>
+
+              <h4>About</h4>
+
+              <p>My interests include distributed computing, data mining, programming, data visualization, and the social web.</p>
+            </div>
+            <div class="text-blob">
+              <a href="/rss.xml"><img src="/img/rss.png"/></a>
+              <a href="http://www.linkedin.com/in/riccomini"><img src="/img/linkedin.png"/></a>
+              <a href="http://twitter.com/criccomini"><img src="/img/twitter.png"/></a>
+              <a href="http://github.com/criccomini"><img src="/img/github.png"/></a>
+            </div>
+            
+          </div>
+          <div class="two-col">
+            <div class="text-blob">
+  <h2 style="color: #2E8AD1;">Google App Engine and Facebook Connect</h2>
+  <div style="font-size: .7em; color: #bbb;">26 Nov 2009</div>
+  Unfortunately, there is not much built in support for PyFacebook in Google App Engine, and very few tutorials about it. This is a brief tutorial to explain how to get Facebook Connect working with Google App Engine.
+  If you want to jump straight to the source code, download "google_app_engine_facebook_connect_python.zip":/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip. 
+
+h5. SETUP GOOGLE
+
+To get started, you need to make sure you have signed up for Google App Engine, downloaded the SDK, and added an application to your account. The Google App Engine Launcher is a great way to develop for app engine. It's a convenient tool that allows you to test locally, and deploy to your app engine appspot quickly. For the purpose of our tutorial, we'll refer to the Facebook Connect app engine project as gae-facebook-connect. 
+
+h5. SETUP FACEBOOK
+
+After setting up your Google App Engine account, you'll need to create a "Facebook Application":http://developers.facebook.com/setup.php. Don't worry too much about step 2 (the xd_receiver.html step), as I've included an xd_receiver.html file in the "tutorial zip":/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip at the end of this tutorial. Once we're set up, we need to setup the Facebook Connect URL for our app engine. 
+
+!{width:100%}/img/app-engine-facebook-connect/facebook-connect.png!:/img/app-engine-facebook-connect/facebook-connect.png
+
+h5. INSTALL PYFACEBOOK
+
+Now that we have both Google App Engine and Facebook Connect setup, let's configure Facebook's Python library (appropriately named "PyFacebook":http://wiki.developers.facebook.com/index.php/PyFacebook_Tutorial). In order to use PyFacebook with Google App Engine, you need to make a modification to the __init__.py file in PyFacebook's facebook directory. Add the following code to the Facebook class in __init__.py.
+
+<script src="https://gist.github.com/3775967.js"> </script>
+
+This trick is documented on the "Facebook developer forums":http://forum.developers.facebook.com/viewtopic.php?pid=164613. For convenience, you can copy __init__.py into the root directory of your app engine project (where your main.py is), and call it facebook.py. This is not required, but it's the structure of the "tutorial zip":/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip. 
+
+h5. WRITE APP
+
+Now that we've got the PyFacebook library configured properly, all that's left to do is write our Facebook Connect login app. First, make your app.yaml read like so.
+
+bc. application: gae-facebook-connect
+version: 1
+runtime: python
+api_version: 1
+
+bc. handlers:
+- url: /static
+  static_dir: static
+
+bc. - url: /.*
+  script: main.py
+
+The static directory is where any images, css, js, etc goes. In our case, this is where the xd_receiver.html will sit. The application value should be whatever your application is called on Google App Engine. 
+
+Next, we need to write main.py to.
+
+<script src="https://gist.github.com/3775970.js"> </script>
+
+There is a lot of boilerplate here, but the basic functionality is that MainHandler takes all requests to the root domain. The get() function is called, which is in the BaseHandler. The BaseHandler will check to see if the user is logged in. If the user is logged in, BaseHandler will call get_secure() in MainHandler, which will print the index.html template. If the user is not logged in, BaseHandler will print the login.html template. 
+
+Let's look at login.html.
+
+<script src="https://gist.github.com/3775976.js"> </script>
+
+And now index.html.
+
+<script src="https://gist.github.com/3775978.js"> </script>
+
+It should be fairly obvious what these two html files are doing. If you don't know what XFBML is, read here. 
+
+h5. CONCLUSION
+
+That's all! Just deploy your app, and you should be able to log in and out of your Facebook Connect Google App Engine app. 
+
+h5. LINKS
+
+"google_app_engine_facebook_connect_python.zip":/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip
+"Google App Engine":http://code.google.com/appengine/
+"Facebook Developer Tools":http://developers.facebook.com/tools.php
+"Facebook XFBML":http://wiki.developers.facebook.com/index.php/XFBML
+"Facebook Application Setup":http://developers.facebook.com/setup.php
+"PyFacebook":http://wiki.developers.facebook.com/index.php/PyFacebook_Tutorial
+"PyFacebook App Engine Patch":http://forum.developers.facebook.com/viewtopic.php?pid=164613
+
+</div>
+
+<div class="text-blob">
+  <div>
+    <div style="float: right;">
+      
+      <a href="/posts.old/posts/social/2010-01-19-exploring-twitter-stream" title="Lately, I've gotten interested in the Twitter stream. Last weekend, I downloaded the stream for about ten hours on Friday. Here's what I found.">Exploring the Twitter Stream &raquo; </a>
+      
+    </div>
+    
+    <div>
+      
+      <a href="/posts.old/posts/hadoop/2009-11-13-sort-reducer-input-value-hadoop" title="I recently found the need to sort by value (intead of key) in Hadoop. I've seen some comments that call this a "secondary sort". Essentially, I wanted the reducer's values iterator to be sorted. There seem to be almost *no* docs, tutorials, or examples (that I could find) on the net for this.">&laquo; Sorting Reducer Input Values in Hadoop</a>
+      
+    </div>
+  </div>
+</div>
+
+
+          </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+        <script src="/js/plugins.js"></script>
+        <script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

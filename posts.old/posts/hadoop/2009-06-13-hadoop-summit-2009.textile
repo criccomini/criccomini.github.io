@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Hadoop Summit 2009</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/blog.css">
+        <script src="/js/vendor/modernizr-2.6.1.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+        
+        <div class="content">
+          <div class="col">
+            <div class="text-blob" style="background-color: #34424D; color: white;">
+              <div style="font-size: 2em; text-align: center;">
+                <a style="color: white; text-decoration: none;" href="/">riccomini.name</a>
+              </div>
+            </div>
+            <div class="text-blob">
+              <a title="BlackBerry Storm, GPS, etc." href="/posts/blackberry">BlackBerry</a> <span style="color: #bbb;">7</span><br/>
+              <a title="Data visualization and infographics" href="/posts/data-visualization">Data Visualization</a> <span style="color: #bbb;">1</span><br/>
+              <a title="iPhone, Python, Operations, and Sports" href="/posts/game-time-baby">Game Time, Baby!</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Hadoop, Map/Reduce, Pig, and Hive" href="/posts/hadoop">Hadoop</a> <span style="color: #bbb;">5</span><br/>
+              <a title="iPhone Objective C, and tutorials" href="/posts/iphone">iPhone</a> <span style="color: #bbb;">2</span><br/>
+              <a title="Kafka, stream processing, Storm, and S4" href="/posts/kafka">Kafka</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Linux, and BASH" href="/posts/linux">Linux</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Python, PyFacebook, and Google App Engine" href="/posts/python">Python</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Twitter, Facebook, and LinkedIn" href="/posts/social">Social</a> <span style="color: #bbb;">5</span>
+            </div>
+            <div class="text-blob">
+              <h4>Who</h4>
+
+              <p>I am a software engineer in Silicon Valley.</p>
+
+              <h4>About</h4>
+
+              <p>My interests include distributed computing, data mining, programming, data visualization, and the social web.</p>
+            </div>
+            <div class="text-blob">
+              <a href="/rss.xml"><img src="/img/rss.png"/></a>
+              <a href="http://www.linkedin.com/in/riccomini"><img src="/img/linkedin.png"/></a>
+              <a href="http://twitter.com/criccomini"><img src="/img/twitter.png"/></a>
+              <a href="http://github.com/criccomini"><img src="/img/github.png"/></a>
+            </div>
+            
+          </div>
+          <div class="two-col">
+            <div class="text-blob">
+  <h2 style="color: #2E8AD1;">Hadoop Summit 2009</h2>
+  <div style="font-size: .7em; color: #bbb;">13 Jun 2009</div>
+  My notes on the Hadoop Summit '09 conference in Santa Clara this year. The conference was very energetic, and Hadoop's momentum is undeniable.
+  * The "The Growing Hadoop Community" talk was an eye opening experience. Given the buzz on Hadoop, I had figured it was much more mature than it actually is.
+** In 2007, there were only 3 companies listed in the "powered by" page. In 2008, Facebook was added, as well as ~20 other big names.
+* ANSI compliant SQL is coming for Pig in the next month or two (!)
+* Oozie (job manager similar to Azkaban) is not impressive.
+* Sun is coming out with an AWS clone (and cloned pricing model! ... )
+* IBM is trying to be relevant with a strange project called M2 that uses Hadoop to crawl/visualize data sets.
+* Cloudera is really trying to do a lot for the Hadoop community. They were very conspicuous at the conference.
+** Cloudera + EBS AWS image is available (and apparently pretty fast compared to S3)
+** Highlighted Sqoop (SQL -> Hadoop) app
+** Big focus on binary packages for projects
+** Three presentations: 2 in Administration track, 1 in Intro. They seem to recognize that friction is coming from ops teams. Attempting to show how to integrate it, or bypass ops (cloud hosting).
+* There seems to be a war brewing between Hive and Pig. They really don't seem to get along too well.
+* Yahoo! is releasing their own Hadoop binary packages (like Cloudera).
+* No one really seemed to be able to give me a good answer as to what Cascading is and how it fits in with workflow/job managers. It's also GPL'd, which means a few people are not too happy with it.
+* EC2 + S3 for Hadoop is really a great solution.
+** EMR is interesting, but a bit limiting for our use case (only can workflow Hadoop jobs). Also, hard to integrate with our staging (non EMR) cluster.
+** People are annoyed with 1hr block pricing. Minimum payment blocks are one hour.
+** Persisting data from EC2 can be done in two ways: (1) Save to S3 or (2) Save to EBS. When new nodes are brought up, they just pull data from S3/EBS, and begin running.
+** Persisting data with Aster involves extra step of loading data into temporary node, and running ncluster_loader to insert the data into your cluster.
+** ShareThis (Paco) was very prominent. They leverage EC2 for just about everything (including running Aster in the cloud).
+* Hbase is focusing on performance now. Seeing pretty big gains. Heard "Can I issue PIG/SQL queries on Hbase?" question 3 times, and also saw it on Pig mailing list.
+* Future proofing map reduce talk was basically a Yahoo! VP explaining why it was a good thing that he broke all of our Hadoop jobs. (0.20 changes)
+* Greenplum was never mentioned at ScaleCamp or Hadoop Summit (that I heard). Aster was acknowledged by Hive/Facebook team as another solution (although Netizza was as well ... ).
+
+h5. LINKS
+
+"Oozie":http://mail-archives.apache.org/mod_mbox/hadoop-core-dev/200906.mbox/%3C1787207751.1244781247474.JavaMail.jira@brutus%3E
+"Katta":http://katta.sourceforge.net/
+"Summit Papers/Presentations":http://developer.yahoo.com/events/hadoopsummit09/
+"Cascading":http://www.cascading.org/
+
+</div>
+
+<div class="text-blob">
+  <div>
+    <div style="float: right;">
+      
+      <a href="/posts.old/posts/social/2009-06-21-comparing-tweetmeme-digg" title="After attending ICWSM this year, and talking to some folks from Digg, I got interested in comparing Digg to Twitter. The question that I wanted to answer was, "Has Twitter made Digg obsolete?"">Comparing Tweetmeme &amp; Digg &raquo; </a>
+      
+    </div>
+    
+    <div>
+      
+      <a href="/posts.old/posts/data-visualization/2009-06-06-ee-cummings-visualization" title="My sister approached me recently with a collaborative project idea. She was working on a paper about E.E. Cummings' collection of poems, entitled "I X I", and wanted to visualize the work.">&laquo; E.E. Cummings 1X1 Visualization</a>
+      
+    </div>
+  </div>
+</div>
+
+
+          </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+        <script src="/js/plugins.js"></script>
+        <script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

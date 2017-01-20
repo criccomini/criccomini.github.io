@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>BlackBerry Storm GPS</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/blog.css">
+        <script src="/js/vendor/modernizr-2.6.1.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+        
+        <div class="content">
+          <div class="col">
+            <div class="text-blob" style="background-color: #34424D; color: white;">
+              <div style="font-size: 2em; text-align: center;">
+                <a style="color: white; text-decoration: none;" href="/">riccomini.name</a>
+              </div>
+            </div>
+            <div class="text-blob">
+              <a title="BlackBerry Storm, GPS, etc." href="/posts/blackberry">BlackBerry</a> <span style="color: #bbb;">7</span><br/>
+              <a title="Data visualization and infographics" href="/posts/data-visualization">Data Visualization</a> <span style="color: #bbb;">1</span><br/>
+              <a title="iPhone, Python, Operations, and Sports" href="/posts/game-time-baby">Game Time, Baby!</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Hadoop, Map/Reduce, Pig, and Hive" href="/posts/hadoop">Hadoop</a> <span style="color: #bbb;">5</span><br/>
+              <a title="iPhone Objective C, and tutorials" href="/posts/iphone">iPhone</a> <span style="color: #bbb;">2</span><br/>
+              <a title="Kafka, stream processing, Storm, and S4" href="/posts/kafka">Kafka</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Linux, and BASH" href="/posts/linux">Linux</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Python, PyFacebook, and Google App Engine" href="/posts/python">Python</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Twitter, Facebook, and LinkedIn" href="/posts/social">Social</a> <span style="color: #bbb;">5</span>
+            </div>
+            <div class="text-blob">
+              <h4>Who</h4>
+
+              <p>I am a software engineer in Silicon Valley.</p>
+
+              <h4>About</h4>
+
+              <p>My interests include distributed computing, data mining, programming, data visualization, and the social web.</p>
+            </div>
+            <div class="text-blob">
+              <a href="/rss.xml"><img src="/img/rss.png"/></a>
+              <a href="http://www.linkedin.com/in/riccomini"><img src="/img/linkedin.png"/></a>
+              <a href="http://twitter.com/criccomini"><img src="/img/twitter.png"/></a>
+              <a href="http://github.com/criccomini"><img src="/img/github.png"/></a>
+            </div>
+            
+          </div>
+          <div class="two-col">
+            <div class="text-blob">
+  <h2 style="color: #2E8AD1;">BlackBerry Storm GPS</h2>
+  <div style="font-size: .7em; color: #bbb;">22 Mar 2010</div>
+  This example outlines how to get GPS working on a real BlackBerry Storm using Verizon Wireless with GPS and data services enabled.
+  h5. BLACKBERRY GPS MAINSCREEN
+
+BBTMainScreen is a main screen class that tracks a user's GPS location. The class sends updates every 10 seconds to LOCATION_URL. The most important (and most difficult) part to figure out is how to configure your Criteria and LocationListener. If these aren't configured properly, the Storm will disable its GPS listener temporarily. 
+
+*Please copy the resetGPS() criteria/location listener settings EXACTLY as they are shown.*
+
+<script src="https://gist.github.com/3773117.js"> </script>
+
+h5. SIGNING YOUR CODE
+
+If you run the above code on your BlackBerry Storm, you will get a "GPS not allowed" LocationProvider exception. You need to get your code signed if you want to use the BlackBerry Storm with GPS in your app. To do this, you need to buy a $20 certificate from RIM. 
+
+After you get your certificate, you need to sign your .cod file using "Signature Tool". Before you do this, you need to change your .csi file. For some reason, BlackBerry does not properly configure the .csi file to include ALL requirements. It took me a long time to figure this out. Your .csi file should look like this.
+
+bc. 33000000=RIMAPPSA2
+52424200=RIM Blackberry Apps API
+52434300=RIM Crypto API - Certicom
+52434900=RIM Crypto API - Internal
+52435200=RIM Crypto API - RIM
+52525400=RIM Runtime API
+
+h5. TESTING
+
+After your code is signed, you can put it on to your BlackBerry, and run it. Running the code should show you your long/lat. If it gives you 0/0, or -1/-1 at first, wait for a minute or two. Resolving the GPS location can take a minute. 
+
+h5. LINKS
+
+"My Last BlackBerry GPS Post":http://www.riccomini.name/Topics/Mobile/BlackBerry/BlackBerryStormGPS/
+"My BlackBerry Support Forum Post":http://supportforums.blackberry.com/rim/board/message?board.id=java_dev&thread.id=11845&view=by_date_ascending&page=1
+
+</div>
+
+<div class="text-blob">
+  <div>
+    <div style="float: right;">
+      
+      <a href="/posts.old/posts/hadoop/2010-03-27-hadoop-pig-sql-documentation" title="It is sometimes difficult for SQL users to learn Pig because their mind is used to working in SQL. In this tutorial, examples of various SQL statements are shown, and then translated into Pig statements.">Hadoop, Pig, and SQL &raquo; </a>
+      
+    </div>
+    
+    <div>
+      
+      <a href="/posts.old/posts/social/2010-01-19-exploring-twitter-stream" title="Lately, I've gotten interested in the Twitter stream. Last weekend, I downloaded the stream for about ten hours on Friday. Here's what I found.">&laquo; Exploring the Twitter Stream</a>
+      
+    </div>
+  </div>
+</div>
+
+
+          </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+        <script src="/js/plugins.js"></script>
+        <script src="/js/main.js"></script>
+
+        
+    </body>
+</html>

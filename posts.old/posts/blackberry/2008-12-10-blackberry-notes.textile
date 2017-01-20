@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>BlackBerry Notes</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="stylesheet" href="/css/blog.css">
+        <script src="/js/vendor/modernizr-2.6.1.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+        <![endif]-->
+        
+        <div class="content">
+          <div class="col">
+            <div class="text-blob" style="background-color: #34424D; color: white;">
+              <div style="font-size: 2em; text-align: center;">
+                <a style="color: white; text-decoration: none;" href="/">riccomini.name</a>
+              </div>
+            </div>
+            <div class="text-blob">
+              <a title="BlackBerry Storm, GPS, etc." href="/posts/blackberry">BlackBerry</a> <span style="color: #bbb;">7</span><br/>
+              <a title="Data visualization and infographics" href="/posts/data-visualization">Data Visualization</a> <span style="color: #bbb;">1</span><br/>
+              <a title="iPhone, Python, Operations, and Sports" href="/posts/game-time-baby">Game Time, Baby!</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Hadoop, Map/Reduce, Pig, and Hive" href="/posts/hadoop">Hadoop</a> <span style="color: #bbb;">5</span><br/>
+              <a title="iPhone Objective C, and tutorials" href="/posts/iphone">iPhone</a> <span style="color: #bbb;">2</span><br/>
+              <a title="Kafka, stream processing, Storm, and S4" href="/posts/kafka">Kafka</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Linux, and BASH" href="/posts/linux">Linux</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Python, PyFacebook, and Google App Engine" href="/posts/python">Python</a> <span style="color: #bbb;">1</span><br/>
+              <a title="Twitter, Facebook, and LinkedIn" href="/posts/social">Social</a> <span style="color: #bbb;">5</span>
+            </div>
+            <div class="text-blob">
+              <h4>Who</h4>
+
+              <p>I am a software engineer in Silicon Valley.</p>
+
+              <h4>About</h4>
+
+              <p>My interests include distributed computing, data mining, programming, data visualization, and the social web.</p>
+            </div>
+            <div class="text-blob">
+              <a href="/rss.xml"><img src="/img/rss.png"/></a>
+              <a href="http://www.linkedin.com/in/riccomini"><img src="/img/linkedin.png"/></a>
+              <a href="http://twitter.com/criccomini"><img src="/img/twitter.png"/></a>
+              <a href="http://github.com/criccomini"><img src="/img/github.png"/></a>
+            </div>
+            
+          </div>
+          <div class="two-col">
+            <div class="text-blob">
+  <h2 style="color: #2E8AD1;">BlackBerry Notes</h2>
+  <div style="font-size: .7em; color: #bbb;">10 Dec 2008</div>
+  Misc notes on setting up Eclipse and running the BlackBerry Simulator.
+  h5. STRING CONCATENATION NOCLASSDEF FOUND ERROR
+
+In eclipse, if you switch to Java 1.5+, string concatenation will fail with a "NoClassDef Found Error". The only solution that I can find is to go back to Java 1.4. 
+
+h5. ECLIPSE BLACKBERRY SIMULATOR/EMULATOR DOES NOT HAVE INTERNET CONNECTION
+
+If your BlackBerry simulator can't connect to the internet, and you are using Eclipse, then you probably need to manually start the MDS emulator. This emulator will act as a BlackBerry server that your mobile device simulator can talk to. To start the MDS emulator, which is a .bat file on Windows, you just need to find it in your Eclipse BlackBerry Plugin path. 
+
+h5. LINKS
+
+"How to alert a user from a background application":http://www.blackberry.com/knowledgecenterpublic/livelink.exe/fetch/2000/348583/800332/800505/800608/How_To_-_Alert_a_user_from_a_Background_application.html?nodeid=820551&vernum=0
+"BlackBerry HelloWorld":http://www.devx.com/wireless/Article/27869/1954
+</div>
+
+<div class="text-blob">
+  <div>
+    <div style="float: right;">
+      
+      <a href="/posts.old/posts/blackberry/2008-12-13-blackberry-storm-in-eclipse" title="Walkthrough showing how to setup the Eclipse IDE to develop for the BlackBerry Storm (9530).">BlackBerry Storm in Eclipse &raquo; </a>
+      
+    </div>
+    
+    <div>
+      
+      <a href="/posts.old/posts/iphone/2008-12-06-simple-login-screen" title="This coding tutorial shows how to develop a login screen for the iPhone. I walk through the complete process of creating and designing a basic iPhone screen. Concepts include the Xcode IDE, Objective C, the iPhone Cocoa UI SDK, Controllers, Outlets, and more.">&laquo; iPhone Simple Login Screen</a>
+      
+    </div>
+  </div>
+</div>
+
+
+          </div>
+        </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+        <script src="/js/plugins.js"></script>
+        <script src="/js/main.js"></script>
+
+        
+    </body>
+</html>
