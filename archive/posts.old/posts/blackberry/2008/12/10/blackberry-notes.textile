@@ -1,0 +1,12 @@
+h5. STRING CONCATENATION NOCLASSDEF FOUND ERROR
+
+In eclipse, if you switch to Java 1.5+, string concatenation will fail with a "NoClassDef Found Error". The only solution that I can find is to go back to Java 1.4. 
+
+h5. ECLIPSE BLACKBERRY SIMULATOR/EMULATOR DOES NOT HAVE INTERNET CONNECTION
+
+If your BlackBerry simulator can't connect to the internet, and you are using Eclipse, then you probably need to manually start the MDS emulator. This emulator will act as a BlackBerry server that your mobile device simulator can talk to. To start the MDS emulator, which is a .bat file on Windows, you just need to find it in your Eclipse BlackBerry Plugin path. 
+
+h5. LINKS
+
+"How to alert a user from a background application":http://www.blackberry.com/knowledgecenterpublic/livelink.exe/fetch/2000/348583/800332/800505/800608/How_To_-_Alert_a_user_from_a_Background_application.html?nodeid=820551&vernum=0
+"BlackBerry HelloWorld":http://www.devx.com/wireless/Article/27869/1954

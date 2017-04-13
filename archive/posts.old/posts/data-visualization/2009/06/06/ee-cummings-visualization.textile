@@ -1,0 +1,59 @@
+h5. READING THE VISUALIZATION
+
+By Chris Riccomini 
+
+The visualization shows the complete work. Starting at the 12 o'clock position, each bar at the edge of the circle represents a poem. Poems progress in a clock-wise direction. Each ray represents a line in the poem. The coloring of the bar represents the theme of that poem. The thickness of the bars represents the word count for that poem. 
+
+I will leave it to the viewer (and my sister) to interpret the results. 
+
+h5. DESCRIPTION
+
+!{float:right;width:50%}/img/ee-cummings-visualization/eecvis.sample.png!:/img/ee-cummings-visualization/eecvis.square.png
+
+By Alex Riccomini 
+
+To accurately approach research on a project exploring the progression and cadence of American poet, E.E. Cummings' 1944 collection, "I X I," it became clear that one of the few seemingly appropriate ways to "analyze" a poet whose core relation is a belief in love and feeling over thought, would be to create a mode through which I could explore his poetry that would remain true to the poet's writing. 
+
+As such, I began batting ideas around with my brother, who has done data visualization for several technology companies. The purpose of this collaboration centers on the idea of creating a visual representation or piece of art that would accurately represent the thematic transition of the poems throughout and within each section. 
+
+My main concern was to study the selection in an environment the author would have found suitable. Through the process of creating an aesthetic interpretation, I felt my resulting analyses would, in effect, translate into the production of an ekphrastic work, with the hope of fusing the three concepts--literature, art, and analysis. Therefore, analysis and interpretation would not be seen as an assault on the arts, but rather an extension of it. 
+
+The resulting imagery produced has highlighted the collection's progression from a dark, winter-based scene full of sardonic comments on society, to an Autumn section that offers a mixed bag, which evolves from societal complaints to larger, universal themes (ie: death and nature) to the final section whose overwhelming focus is on love, set in a Spring-theme. 
+
+Through studying the collection in this manner, I am focusing on the relation of the various themes and lengths of the corresponding poems as critiques, interferences, or enablers of this concept of "one-ness," or love as an exemplification of acceptance of one's--pardon the pun--individuality and realization of personhood. 
+
+Quite naturally, this led to my desire to trace the use of the word "one" throughout the selection; to study where, when, and how often the word is placed within the context of love and sex, war, or societal conventions enables the inquirer to see if its own definition remains stagnant throughout, or if, like the collection its set in, it too grows and changes to become its final meaning in the last poem. 
+
+So, whether or not you are familiar with E.E. Cummings and his poetry, I hope you can understand and enjoy this project for its earnest desire to remain aesthetically pleasing in an effort to relate to and accurately represent a playful, creative, and above all, visually-based literature. 
+
+h5. VISUALIZATION
+
+By Chris Riccomini 
+
+During our brainstorm, we decided that we wanted to visualize the complete work. I had originally planned on doing the visualization linearly, but the length of the work is so long that it did not fit comfortably in a reasonable space. 
+
+I made the visualization using "processing":http://www.processing.org/. My sister supplied me with the text of all poems in "I X I", and a list of the themes for each poem. 
+
+Once I had the poems, I wrote some code to load all of the poems into memory, and do analysis on them. I did word counts, counts for sentences containg the word "one", line counts, etc. From there, it was simply a matter of programatically drawing everything on the canvas. 
+
+Aesthetically, and unintentionally, the work looks like a sun, which fits perfectly with the opening poem's first line: nonsun blob a. 
+
+h5. OBSERVATIONS
+
+By Alex Riccomini 
+
+While the actual paper on this will be coming in good time, I was asked to give a few, overarching observations to relate the visualization to "I X I." 
+
+First, the most obvious piece of information to extract from this visualization is that as the sections progress, the poems within them are at first fairly varied (with a focus on societal, economic, and political commentary; then, the second section begins to translate to these concepts interspersed with love/sex; and, the final section is devoted almost entirely to love/sex.) The overt change in focus happens to be at the exact numerical center of the collection. For a poet whose attention to the positioning, length, structure, and numerical/lyrical structure of his work is nothing if not acute and meticulous, it is hardly unrealistic to infer that this was a purposeful move on his part. 
+
+One possible interpretation is that this concept of "one-ness" (which, again, is a truthful realization of oneself, despite societal/commercial pressures, whose highest application is in loving another, hence the title: "I X I") must occur at the core, a pivotal, and personal point; in this case, what is more pivotal than the exact center of the collection? It is almost as if he has created a verbal teeter-totter, challenging the reader to either tip to his unencumbered, truthful being, or risk succumbing to the weight and pressure of society's conventions and value system (at the loss of one's true "self.") 
+
+Another crucial, if not blatantly clear interpretation of the visual is that its shape is that of a crude sun. Not only does this hold an uncanny connection to the first poem, 1: "nonsun blob a," but this collection has been historically noted for its season-based progression, from winter, to fall, and finally spring. With no intention of mimicking the shape of the sun, the combination of the themes and poem and line lengths, a circular shape made the most sense. The combination of all the other elements just happens to align to form a sun-like shape. This is the type of irony E.E. Cummings surely would have enjoyed, and is a prime example of the end goal of this project: to assimilate this collection of poetry, with a piece of art, and its interpretation as a natural evolution that builds upon itself in an enlightening manner. 
+
+h5. PRINTS
+
+Prints of this visualization are available "here":http://www.cafepress.com/criccomini. 
+
+h5. LINKS
+
+"All I X I Poems":http://www.geocities.com/SoHo/Lofts/5291/

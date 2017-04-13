@@ -1,0 +1,69 @@
+h5. METHODOLOGY
+
+The first issue to decide on is how to equate Digg votes to Twitter votes. This is actually quite easy. We can consider a tweet/retweet of a link on Twitter to be a positive vote on Digg. 
+
+To compare Twitter and Digg, I chose to use "Tweetmeme":http://www.tweetmeme.com/ instead of Twitter. The reasoning behind this is that Tweetmeme shows the most popular links from Twitter users, just as Digg shows the most popular links from its users. Furthermore, the front page of Tweetmeme is almost identical to the front page of Digg, in both behavior and appearance. This let me compare apples to apples, so to speak. I am aware of arguments that can be made against this methodology, but for an empirical, semi-scientific exploration of the data, this method should be just fine. 
+
+After deciding on Tweetmeme, I wrote a script that pulled the current 100 news items on the front page of both Digg and Tweetmeme. I set the script to run every five minutes, and log the results to a text file. I let the script run from May 22nd, 2009 to June 13th, 2009. This comprises just over 3 weeks of data. 
+
+h5. NEWS VOLUME
+
+The first question that comes to mind when comparing Tweetmeme and Digg is: Who has more news appearing on their front page? 
+
+!{width:100%}/img/comparing-tweetmeme-digg/news_item_volume.png!
+
+As you can see, Digg clearly has much more news showing up on its front page than Tweetmeme does. What about news volume by hour? 
+
+!{width:100%}/img/comparing-tweetmeme-digg/hourly_news_items_on_digg.png!
+!{width:100%}/img/comparing-tweetmeme-digg/hourly_news_items_on_tweetmeme.png!
+
+Digg takes the cake here as well. In fact, Tweetmeme's volume of news is quite small, averaging between 3 and 4 news items per hour. What does this tell us about Twitter's link traffic? Perhaps people are less likely to retweet if they found a link from someone who has more followers than they do. Maybe they are assuming that retweeting the link is not warranted given that others may have already seen it. 
+
+How do the two news sites overlap on their front page news items? It turns out that there are only 48 news items that appeared on both the front page of Digg and Tweetmeme. 
+
+!{width:100%}http://chart.apis.google.com/chart?cht=v&chs=700x200&chd=t:100,20,0,1.5,0,0,0&chdl=Digg|Tweetmeme&chtt=Front%20Page%20News%20Item%20Overlap!
+
+ 
+
+h5. BREAKING NEWS
+
+Another important aspect of Internet news concerns who breaks coverage of the story first. Specifically, which front page, Digg or Tweetmeme, did a given news item appear on first? 
+
+!{width:100%}/img/comparing-tweetmeme-digg/news_promoted_first.png!
+
+Given the small overlap (48 stories), there's not much data to go on, but Tweetmeme comes out ahead. I'm not quite sure what to make of this, given that retweeting and digging are both relatively low friction actions. It just seems that popular items on Twitter are retweeted faster than popular items that appear on Digg. This could indicate that Twitter users are more engaged, and constantly checking their streams. Given the number of ways to get tweets (text message, web, desktop apps, etc), this might make sense. 
+
+h5. DIVERSITY
+
+The last, and perhaps most important, aspect of social news concerns the diversity of news on the front page. I've broken the diversity into two categories: news submitters, and domains. 
+
+!{width:100%}/img/comparing-tweetmeme-digg/top_30_domains_on_digg.png!
+!{width:100%}/img/comparing-tweetmeme-digg/top_30_domains_on_tweetmeme.png!
+
+Regarding domains, it appears that Digg has a far more diverse set of domains that are submitted to its site. Tweetmeme is dominated by mashable, twitpic, and tech crunch. This isn't too surprising, but it doesn't do much for news diversity when half of the news comes from just three sites. 
+
+The other aspect of diversity is diversity of posters. If you have only a few contributors making up most of the news items, you basically have devised a system of editors that are no different from Slashdot. 
+
+!{width:50%}/img/comparing-tweetmeme-digg/digg_top_posters.png!!{float:left;width:50%}/img/comparing-tweetmeme-digg/digg_poster_diversity.png!
+
+As you can see, Digg does not perform well in this area. The top news submitters for this two week period had 47 news items appear on the front page. In fact, the top 30 posters comprised just over 31% of all news items on the front page. So much for a social news democracy. I didn't check, but it would be interesting to see if these other news items were submitted before hand by other (less influential) Digg members. 
+
+I excluded Tweetmeme poster diversity because it's a little bit more difficult to get with Twitter, and Tweetmeme doesn't seem to monkey with the weighting of tweets the way that Digg appears to monkey with the weight of diggs. I should mention that I've been told that Digg does NOT weight users differently, but, if that's true, then it appears they've just devised a proxy system in which the few top users control what's on the front page. 
+
+h5. SUMMARY
+
+Given that the charts and data are both freely available, I'll let you draw your own conclusions. What is apparent to me is that Tweetmeme and Digg each have their own flaws. Tweetmeme is dominated by three sites: twitpic, mashable, and tech crunch. Digg is clearly dominated by a very powerful minority of posters that decide what is on the front page. Both of these sites make things a little less democratic than perhaps we'd wish, but maybe this is what we need, given the amount of useless content on the Internet? 
+
+h5. DATA
+
+"diggs.csv":/files/comparing-tweetmeme-digg/diggs.csv
+"tweets.csv":/files/comparing-tweetmeme-digg/tweets.csv
+"tweetdiggs.xlsx":/files/comparing-tweetmeme-digg/tweetdiggs.xlsx
+
+h5. LINKS
+
+"Digg":http://www.digg.com/
+"Twitter":http://www.twitter.com/
+"Tweetmeme":http://www.tweetmeme.com/
+"Techcrunch Twitter Traffic Breakdown":http://www.techcrunch.com/2009/06/14/for-techcrunch-twitter-traffic-a-statistical-breakdown/
+"ICWSM":http://www.riccomini.name/Topics/Web/SocialNetworking/ICWSM2009/

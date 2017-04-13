@@ -1,0 +1,18 @@
+This persistent store uses a code signing key to encrypt the data that is stored on the BlackBerry. Without this, any application (or user with access to the BlackBerry) could read the contents of your store. This is a problem if you wish to store a password on the device. 
+
+h5. STORE PASSWORDS ON DISK
+
+I wrote this when I wanted to store a password for a mobile app on the BlackBerry. If you are interested in storing things in plain-text, rather than encrypted, you don't need to use the CodeSigningKey class in this snippet. 
+
+h5. ENCRYPTION
+
+Also of note, if you use this with encryption, you will need to "get a license":https://www.blackberry.com/SignedKeys/ from BlackBerry (because encryption is used). I've read that they cost $100, and can take up to 10 days to process. On top of this, you are subject to the license agreement that BB offers, and must sign your app using the cert that BlackBerry gives you. 
+
+I believe that you *do not* need the Certicom license that applies to BB apps that "use certain encryption libraries":https://www.blackberry.com/SignedKeys/.
+
+<script src="https://gist.github.com/3773323.js"> </script>
+
+h5. LINKS
+
+"BlackBerry Code Signing Tips":http://blackberry.synclastic.com/blackberry-code-signing-tips/
+"BlackBerry - Java Code Signing Keys":http://na.blackberry.com/eng/developers/javaappdev/codekeys.jsp

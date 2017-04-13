@@ -1,0 +1,9 @@
+h5. NO INTERNET CONNECTIVITY
+
+If you can't get a connection to the internet (and have verified it by opening the browser on your BlackBerry simulator), then you probably need to start the MDS server. This is a .bat file in the simulator plugin path.
+
+<script src="https://gist.github.com/3773338.js"> </script>
+
+h5. LINKS
+
+"J2ME Networking":http://www.ibm.com/developerworks/java/library/wi-jio/

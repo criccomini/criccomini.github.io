@@ -1,0 +1,23 @@
+h5. LOCATION TRACKER
+
+LocationTracker is a class that will track a user's location and send GPS updates to a website address every 10 seconds. This is useful if you wish to track a user's location over an extended period of time. 
+
+h5. ALTERNATIVE TECHNIQUE
+
+I am aware that there are many different ways to do this. Another common way is to send location updates only when we get them (rather than every 10 seconds). This is good, except when a user turns his phone off (or loses internet connectivity), in which case, the user will be indefinitely placed at his (or her) last known location. The solution to this is to send a keep alive signal every so often, which lets the web service know that the user just hasn't moved. I opted not to do this for simplicity's sake, and also because my 10 second long/lat update is used as a keep alive (even if the user hasn't moved, the update is still sent). 
+
+h5. CONFIGURE BLACKBERRY GPS FOR ECPLIPSE
+
+By default, if you are using Eclipse with a BlackBerry simulator, it will not have GPS enabled. This is because the default device for the simulator doesn't support GPS. To enable it, you must change the device in the project properties to a BlackBerry device that comes with GPS.
+
+<script src="https://gist.github.com/3773331.js"> </script>
+
+h5. BLACKBERRY GPS FOR THE STORM (9530)
+
+If you run the above code on your BlackBerry device (for instance a Storm), you will get a "GPS not allowed" LocationProvider exception. You need to get your code signed if you want to use the BlackBerry Storm with GPS in your app. To do this, you need to buy a "$20 certificate":http://na.blackberry.com/eng/developers/javaappdev/codekeys.jsp from RIM. 
+
+h5. LINKS
+
+"BlackBerry Storm GPS":http://supportforums.blackberry.com/rim/board/message?board.id=java_dev&thread.id=11845
+"Blackberry GPS/Location API":http://www.apsquared.net/blog/2007/07/10/blackberry-gpslocation-api/
+"BlackBerry GPSInfo":http://www.blackberry.com/developers/docs/4.7.0api/net/rim/device/api/gps/GPSInfo.html

@@ -1,0 +1,68 @@
+h5. What is YARN
+
+YARN is a generic cluster-scheduler for managing executing processes in a distributed environment. YARN is going to be used in Hadoop's next-generation Map/Reduce framework. For more, have a look at "this page":http://hadoop.apache.org/docs/r0.23.0/hadoop-yarn/hadoop-yarn-site/YARN.html.
+
+h5. Building Applications on YARN
+
+I presented this deck "at the meet-up":http://www.meetup.com/Hadoop-Contributors/events/85353562/. My focus was mostly on the architecture of a YARN application, design decisions that need to be made, and the trade-off between high and low coupling with Hadoop (HDFS, Kerberos, metrics2, Configuration, etc).
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/14721401" width="476" height="400" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+One thing that I wish I'd included in this presentation was a slide on testing. This is an area where Map/Reduce has fallen short, traditionally, and it's unfortunate, because M/R jobs could be so easily mock-able and unit-testable. My take aways are:
+
+* It's annoying to test your AM but you really need to do it.
+* Make your APIs easily mockable. Pay *close* attention to mock-ability of the storage layer.
+
+Another minor note regarding the logging slide: The NMs can be configured to post logs to locations other than HDFS servers (for example, HTTP servers), so there is an alternative to letting your logs expire on the NM machine if you're not running HDFS. This is done by specifying an HTTP path instead of an HDFS one.
+
+Lastly, regarding the orphaned subprocess section, you might want to have a look at my previous post: "Killing Subprocesses in Linux/Bash":http://riccomini.name/posts/linux/2012-09-25-kill-subprocesses-linux-bash/
+
+h5. Highlights
+
+There was a really interesting request from someone: NodeManager labels (e.g. "gpu", "flash disk", etc). This would allow ApplicationMasters to do resource requests based on lables. For example, "Only give me containers on nodes with flash disks." With this feature, you could even partition YARN clusters in this way (e.g. "map-red" label vs "storm" label).
+
+A lot of gripes from users were about how clunky the API was for interacting with the RM and NM. The YARN developers are really aware of this, and were asking for a lot of feedback. I was really excited to hear discussion about a call-back based API for AMs. This would eliminate, or at least hide, the current 'poll the RM' style AMs that are being written. Instead, AMs would just receive method callbacks for things like onNewContainer, onContainerKilled, etc. On the client side, Arun and Vinod also mentioned some improvements in the Client API.
+
+Yahoo's presentation had a few pros and cons that I strongly agreed with. They said that YARN was 'surprisingly stable'. I definitely agree with this. Aside from an issue we had with it on truck, a year ago, I haven't seen any bugs in it. On the con side, Yahoo mentioned the lack of a generic log-history server, as well as difficulty debugging ApplicationMasters.
+
+Regarding debugging ApplicationMasters, in 2.0.2, a new feature, called 'Unmanaged AM' has been added to test AMs locally by emulating the RM. To test your AM locally, you execute a command like, "yarn am &lt;class&gt;". The coolest part of this feature is that the containers will still execute on the real cluster; only your AM will be local. This should allow for "real world" testing of your AM.
+
+Another minor request that I had was to add job tagging, so clients could tag their jobs as "map-reduce", "storm", "s4", etc. This makes it easier for dashboards to deal with mix-worload YARN clusters, where showing certain jobs in a dashboard doesn't make sense.
+
+h5. Yahoo's experience with YARN and 0.23
+
+* The good:
+** Running on a 0.23.3 on a 2000 node cluster.
+** Suprisingly stable.
+** 150,000 jobs run.
+** Validated isolated tests on 10,000 nodes.
+** Big win is web services. Had been scraping pages, and now it's in HTTP/REST.
+** Higher utilization with no fixed partitioning between mappers and reducers.
+** Performance is on-par/better at everything (Read, sort, shuffle, gridmix, small jobs).
+** Other paradigms looking into (Spark, MPI, S4, Storm, Giraph)
+** Question: Has anyone thought about open graph (MPI-related)?
+* The not so good:
+** Oozie on YARN can have deadlocks when queues are mis-configured
+** UI scalability issues (very large tables, and pagination in JS)
+** Minor incompatibilities in distributed cache
+** No generic history server
+** AM failures hard to debug
+* Will be installing it on a 3600 node cluster next week
+
+Follow up about posting logs back to HTTP.
+
+h5. Future work
+
+Arun and Vinod presented on future work.
+
+* Multiple resource dimensions (priority, memory, cpu, data locality, etc) when making your request
+* Complaints about existing ClientRMProtocol, AMRMProtocol, ContainerMAnagerProtocol
+** How does RM/NM prioritize resource requests with multiple dimensions? By host/rack? By memory? CPU?
+** Release/reject of containers: you can go to either RM or NM to reject. Which do I do? API is confusing.
+** Ask for specific nodes/racks (pin jobs to specific hosts)
+** Black list certain racks/nodes. Can't do this now.
+** Overload allocate call. Want more specific API rather than generic one (getSatuts, killContainer, etc).
+** Gang scheduling is a pending improvement. "I need all 10 containers, or none."
+* Resources
+** Want to recognize # of cores on the system, not just memory, when requesting resources. (CPU support).
+

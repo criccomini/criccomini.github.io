@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title></title>
+		<description></description>
+		<link></link>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Using YARN with Cgroups</title>
+				<description>h5. Introduction
+
+I'm still a novice with Cgroups, but I thought it would be worth documenting how to set YARN up with them, since there seems to be a surprising lack of documentation on how to get this stuff going. I'm going to show you how to:
+
+## Check if Cgroups is installed on your machine
+## Configure YARN to run use Cgroups
+
+Note that this tutorial is written based on a RHEL 6 environment. You won't be able to use the CGroup features unless you're on Linux.
+
+h5. What are Cgroups?
+
+Cgroups are a Linux kernel module that allow you to control resource usage (CPU, disk, etc) at a per-process level, to provide performance guarantees when running in a shared environment.
+
+The two best places to get a high level view of Cgroups are:
+
+** &quot;https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt&quot;:https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt
+** &quot;Red Hat Enterprise Linux 6 Resource Management Guide&quot;:https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/pdf/Resource_Management_Guide/Red_Hat_Enterprise_Linux-6-Resource_Management_Guide-en-US.pdf
+** &quot;https://wiki.archlinux.org/index.php/Cgroups&quot;:https://wiki.archlinux.org/index.php/Cgroups
+** &quot;http://en.wikipedia.org/wiki/Cgroups&quot;:http://en.wikipedia.org/wiki/Cgroups
+
+*You should definitely read the first two documents, which are the kernel documentation, and RHEL 6 documentation for Cgroups. The remainder of the post assumes you've read these documents.*
+
+Currently (as of 2.0.5-alpha), YARN only supports Cgroups CPU isolation (using a property called cpu.shares, which I'll get into later). There are future plans to add more features to the CPU isolation (in 2.1.0-beta; &quot;YARN-610&quot;:https://issues.apache.org/jira/browse/YARN-600, &quot;YARN-799&quot;:https://issues.apache.org/jira/browse/YARN-799, &quot;YARN-810&quot;:https://issues.apache.org/jira/browse/YARN-810), and also support other resources, such as disk, and network.
+
+h5. Setting up Cgroups
+
+Cgroups is fairly OS-specific, so you'll need to do research into whether your particular OS and Kernel have Cgroups setup and installed. For this tutorial, I used RHEL 6 with the following kernel:
+
+&lt;script src=&quot;https://gist.github.com/5784586.js&quot;&gt; &lt;/script&gt;
+
+Ubuntu also has Cgroup support rolled into it (See &quot;Docker&quot;:http://www.docker.io/). You can verify whether Cgroups is installed by checking if /proc/cgroups exists.
+
+&lt;script src=&quot;https://gist.github.com/5784621.js&quot;&gt; &lt;/script&gt;
+
+Another way to check if Cgroups exist is by looking for the mount point where Cgroups end up. In &quot;RHEL 6&quot;:https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/pdf/Resource_Management_Guide/Red_Hat_Enterprise_Linux-6-Resource_Management_Guide-en-US.pdf, this defaults to /cgroup. The mount point might also be in /sys/fs/cgroup on other setups.
+
+You'll probably also want to install libcgroup, which comes with some handy tools (as mentioned in the RHEL 6 documents, linked above).
+
+&lt;script src=&quot;https://gist.github.com/5784697.js&quot;&gt; &lt;/script&gt;
+
+Finally, you'll want to setup a CPU directory inside the Cgroup root folder (if one doesn't already exist), so YARN can use it to mount its CPU hierarchies.
+
+&lt;script src=&quot;https://gist.github.com/5784740.js&quot;&gt; &lt;/script&gt;
+
+Once you've established that Cgroups is installed (or installed it), and configured the CPU directory, it's time to setup YARN's NM and RM to use it.
+
+h5. Setting up YARN with Cgroups
+
+To use YARN with CGroups, all you really need to do is configure it to use the LinuxContainerExecutor (LCE), instead of the DefaultContainerExecutor, that ships with it out of the box. Once you configure the LCE, you just need to flip a few switches to get the LCE using Cgroups.
+
+*To setup LCE for YARN, start by reading &quot;Hadoop MapReduce Next Generation - Cluster Setup&quot;:http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html.*
+
+In your yarn-site.xml, you need to add the following configurations:
+
+&lt;script src=&quot;https://gist.github.com/5784750.js&quot;&gt; &lt;/script&gt;
+
+Make sure to set the last configuration value according to the group that your YARN users will run under (e.g. hadoop). 
+
+You'll probably also want to configure the YARN NM to support more than one virtual core. By default, the NM only allows one virtual core to be used.
+
+&lt;script src=&quot;https://gist.github.com/5784838.js&quot;&gt; &lt;/script&gt;
+
+All this is doing is mapping some number of virtual cores to your machine's physical cores. This is useful because it lets you run different kinds of machines in the same YARN cluster (e.g. some with CPUs that are 2x as fast as others), and still have a standard &quot;core&quot; that developers can use to reason about how much CPU they need.
+
+Setup your container-executor, and container-executor.cfg file (see the &quot;ClusterSetup&quot;:http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/ClusterSetup.html link for details):
+
+&lt;script src=&quot;https://gist.github.com/5785070.js&quot;&gt; &lt;/script&gt;
+
+Finally, if you're running YARN 2.0.5-beta, or prior, you'll need to patch your hadoop-yarn-server-nodemanager-2.0.5-alpha.jar with &quot;YARN-600&quot;:https://issues.apache.org/jira/browse/YARN-600, which actually updates cpu.shares with the proper percentage.
+
+Now, when you turn on the YARN RM and NM, your jobs can use Cgroups!
+
+&lt;script src=&quot;https://gist.github.com/5784890.js&quot;&gt; &lt;/script&gt;
+
+h5. Example
+
+By default, containers will use one virtual core, which means that they'll all get /cgroup/cpu/hadoop-yarn/container_id/cpu.shares set to 1024. You can experiment with these files pretty easily, and see how Cgroups works.
+
+Start a single YARN container. Make the code in this containers just spin to waste CPU. I was having my containers hash random strings in a loop.
+
+&lt;script src=&quot;https://gist.github.com/5784924.js&quot;&gt; &lt;/script&gt;
+
+When you run `top`, you should see that the process is using nearly 100% of a single core. This might be surprising to you if you're running more than one virtual core per physical core. For example, if you had a pcore:vcore ratio of 1:2, wouldn't you expect a single container to get at most 50% of a core? As it turns out, Cgroups defaults to being optimistic. It lets you use as much CPU is available, and only begins throttling things back when the CPU is 100% utilized. Have a look at this &quot;RFC&quot;:http://lwn.net/Articles/336127/ for details. This can be changed using Linux's completely fair scheduler (see &quot;YARN-810&quot;:https://issues.apache.org/jira/browse/YARN-810).
+
+To continue the test, run 1 more container than you have cores on your machine (in this example, my machine has 8 cores, so I run a total of 9 containers). When you run `top`, you should see that all processes are fighting for CPU with roughly the same CPU usage for each process.
+
+To activate Cgroups manually, run this command for one of your containers:
+
+&lt;script src=&quot;https://gist.github.com/5784941.js&quot;&gt; &lt;/script&gt;
+
+What we've just done is assign a very small fraction of the total CPU available to the YARN NM (10 / (10 + 8 * 1024) = .1%) to container_1371055675984_0001_01_000002.
+
+If you run `top`, you should now see something like this:
+
+&lt;script src=&quot;https://gist.github.com/5784993.js&quot;&gt; &lt;/script&gt;
+
+As you can see, the CPU usage for PID 16708 is at 2.3%, while all of the others are maxing out near 100%! If you were to set the cpu.shares back to 1024, you'd see that the process once again gets its fair share.
+
+h5. CGroups in Code
+
+Now that we've shown that Cgroups can work manually, you'll probably want to update your YARN code to actually use them. This part is pretty trivial. You just need to call the setVirtualCores method on the &quot;Resource&quot;:http://hadoop.apache.org/docs/current/api/org/apache/hadoop/yarn/api/records/Resource.html class when making container resource requests in YARN.
+
+Make sure that whatever you request is within the minimum and maximum vcore boundaries defined in &quot;yarn-default.xml&quot;:http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-common/yarn-default.xml.
+
+h5. Bumps in the Road
+
+Here are some problems that I encountered, along the way.
+
+## YARN was not updating cpu.shares. This is fixed in YARN-600.
+## Invalid argument exception when AM starts up. This is triggered by the container-executor, and is fixed in YARN-799.
+## YARN AM was failing to localize. This is because the usercache directory that YARN uses was owned by the YARN NM username. When switching to LCE, that directory must be owned by the user running the job. Deleting usercache entirely and restarting the YARN NMs solved the problem.
+## YARN ignoring my container-executor.cfg file. It turns out that, by default, container-executor is hard-coded to use ../etc/hadoop/container-executor.cfg. If you want to put your container-executor elsewhere, you'll need to re-build container executor.
+
+&lt;script src=&quot;https://gist.github.com/5785113.js&quot;&gt; &lt;/script&gt;
+
+When running the code initially, I was getting an &quot;invalid argument&quot; error when my YARN AM started. This turns out to be triggered when YARN tries to write to /cgroup/cpu/hadoop-yarn/container_id/cgroup.procs. This file was initially read-only, and only recently, in the Linux kernel, has it become read-write. There is a Jira open (YARN-799) to resolve this.
+</description>
+				<pubDate>Fri, 14 Jun 2013 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/hadoop/2013/06/14/yarn-with-cgroups.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/hadoop/2013/06/14/yarn-with-cgroups.textile</guid>
+			</item>
+		
+			<item>
+				<title>Tech Exits: What You Should Know</title>
+				<description>h5. DISCLAIMER
+
+I am not an expert in any of these areas. This is just a list of things that I've heard, or discussed with people, over the years. This is not meant to substitute the advice of a financial advisor. This post does not reflect the view of my employer, or of anyone other than myself.
+
+h5. FUNDING
+
+Most tech companies are funded through a combination of &quot;angel investors&quot;:http://en.wikipedia.org/wiki/Angel_investor and &quot;venture capitalists&quot;:http://en.wikipedia.org/wiki/Venture_capital using a combination of &quot;convertible notes&quot;:http://techcrunch.com/2012/04/07/convertible-note-seed-financings/ (early) and &quot;preferred equity&quot;:http://www.payne.org/index.php/Startup_Equity_For_Employees (later). At the very beginning, the founders (usually a team of 1-4 people) use their network to get &quot;pitch meetings&quot;:http://bitly.com/bundles/royrod/2 with potential investors.
+
+As an employee of a pre-IPO startup, you're probably going to be &quot;compensated with a combination of salary (money) and stock&quot;:https://www.secondmarket.com/education/resource/what-startup-employees-should-know-about-their-equity-2. If you're early enough, you'll get &quot;granted shares&quot;:http://www.payne.org/index.php/Startup_Equity_For_Employees#Founder.27s_.2F_Restricted_Stock. If you're joining later on, typically post-series-A, you'll get options (the option to buy your shares at a given price). This distinction is rather nuanced; for more information, see the tax section, below. Typically these shares &quot;vest&quot; over a four year period with a one year cliff. This means that you have to wait 1 year before you get 25% of your options. Then, monthly, after that, you'll receive 1/48th of your total grant for the remaining three years.
+
+There are a number of things that you should consider if you go to work for a pre-IPO startup. When the founders raise money, they're going to start hiring employees. The very first employee (employee #1) will typically be offered a chunk of shares that is equivalent to between 0.5% and 1% of the company's valuation. For example, if a startup raised its seed funding at a 10 million dollar valuation, the first employee could receive $100,000 worth of shares. These shares will be regular (not preferred).
+
+You'll notice that I did not say that the employee will receive X number of shares; I said, &quot;Some number of shares valued at X.&quot; This is an important distinction that has a huge psychological impact. When companies fight to hire employees, often times, you'll hear, &quot;Company X offered me 30,000 shares, and company Y offered me 10,000. Obviously, I'm going to join company X.&quot; This is a completely non-sensical statement. What if the 30,000 shares are worth $1 each, and the 10,000 shares are worth $100 each? You need to ask companies, at least, the following:
+
+# How many shares are there.
+# What are the value of the shares.
+# What is your exit strategy.
+
+Using this information, you can determine who is offering you more money, in shares. You can also determine the valuation of the company. For example, if a company has 100 million shares valued at 10 cents each, the company is worth $10 million. The valuation of the company can be extremely important, as you'll see in the acquisition section, below.
+
+It's also worth level setting expectations for potential income from the shares you receive. There are generally three scenarios for a startup. The most likely is that the startup dies. The second most likely is that the startup is acquired. The least likely is that the startup IPOs. The simple fact is that very few companies actually have an exit larger than $100 million dollars. If you are an early stage employee at those companies, you will definitely grow your wealth substantially (between $15 million and $100 million, typically), but this is incredibly rare, even in the valley. Let's continue with the employee #1 scenario above. Let's say that you receive 1% of the company, in shares. A few years later, your company is acquired for $100 million dollars (a fairly large acquisition). You now have $1 million dollars in shares. Are you $1 million dollars richer? No. You owe taxes. Depending on how you handle your grant (&quot;AMT&quot;:http://en.wikipedia.org/wiki/Alternative_Minimum_Tax vs. regular income), and which state you live in (state tax; 10% in California), you'll probably earn about $650,000, after taxes. This is a fantastic chunk of money. Does it mean you'll be flying private jets? No. It means you'll live comfortably, pay your kid's college tuition, and not have to worry about losing your house. The media doesn't tell you this kind of stuff, when it sensationalizes IPOs and acquisitions.
+
+I highly recommend &quot;this Quora post&quot;:http://www.quora.com/Startups/When-joining-a-small-startup-15-people-what-are-some-appropriate-questions-to-ask-to-help-determine-the-value-of-your-equity-and-the-potential-of-the-company and &quot;this Wealthfront post&quot;:https://blog.wealthfront.com/startup-employee-equity-compensation/ for further reading.
+
+h5. ACQUISITIONS
+
+Acquisitions are a hot way to cash out in the valley, these days. Companies like Facebook are &quot;acquihiring&quot;:http://www.washingtonpost.com/national/on-leadership/for-tech-companies-like-facebook-and-google-acqui-hiring-present-latest-management-challenge/2012/10/11/9b4a9744-13ab-11e2-be82-c3411b7680a9_story.html failing startups right and left, and a lot of larger companies are flush with cash after IPO'ing and building up their talent pool.
+
+Acquisitions of small startups generally serve several purposes. In today's competitive hiring environment, acquisitions can be an easy way to get a chunk of good engineers all at once. Additionally, if a startup is competing with a larger company, the company might choose to purchase the startup as a way to protect itself (e.g. Instagram and Facebook). Lastly, and most cynically, an acquisition can be used as a way for VCs to cash themselves out without losing all of their money. Some VCs will use their connections to engineer a purchase of a failing startup that they've invested in, in order to prevent a loss, and save face. I should note, however, that not all acquihires are favorable to VCs.
+
+One other thing to look out for, especially if you work at a startup, is the fact that VCs get &quot;preferred shares&quot;:http://www.avc.com/a_vc/2011/07/financing-options-preferred-stock.html. Essentially, this means that they get paid in full, before anyone else. For example, if a VC puts in $1 million, and the company sells for $10 million, the VC gets his initial $1 million back before anyone else sees a dime. In cases where the startup is failing, and likely sells for about what it was valued at when raising capital, this means the employees walk away with almost nothing.
+
+Lastly, you need to consider whether the startup that you're joining has priced themselves out of an acquisition. What I mean by this is, when a company raises a round of funding, they sell shares to investors at a given price. The price per share determines the value of the company at that point in time. For example, if a startup raises $20 million dollars at $20 per share, and they have 100 million total shares, then the company is worth 2 billion dollars (20 * 100 million). You have to ask yourself, can you see a company purchasing this startup for $2 billion? Anything under a sale of $2 billion means that some of the VCs will lose money, and is unlikely to happen, since VCs typically hold veto rights on deals.
+
+More reading &quot;here&quot;:http://pandodaily.com/2012/08/25/the-acqui-hire-scourge-whatever-happened-to-failure-in-silicon-valley/, &quot;here&quot;:http://daslee.me/quick-thoughts-on-acquihiressoft-landings, and &quot;here&quot;:http://papers.ssrn.com/sol3/papers.cfm?abstract_id=2040924. I highly recommend the last one, which is a paper from some professors, examining the practice of acquihiring.
+
+h5. THE IPO
+
+Another way that an employee might reach liquidity with regards to his or her shares is when the company that they work for has a public offering of their shares. In such an event, the company elects to make the shares publicly tradable on a stock exchange, such as the NASDAQ or NYSE.
+
+h5. S-1 FILING
+
+A company that wishes to sell some of their shares on the public market must file an S-1 form with the SEC. These forms tend to follow a fairly standard layout, though they typically contain cover letters and some freedom to write in plain english. Here are some examples:
+
+* &quot;Groupon&quot;:http://www.sec.gov/Archives/edgar/data/1490281/000104746911005613/a2203913zs-1.htm
+* &quot;Facebook&quot;:http://sec.gov/Archives/edgar/data/1326801/000119312512034517/d287954ds1.htm
+* &quot;Yelp&quot;:http://sec.gov/Archives/edgar/data/1345016/000119312511315562/d245328ds1.htm
+* &quot;Google&quot;:http://i.i.com.com/cnwk.1d/pdf/ne/2004/google.pdf
+
+If you work for a company that IPOs, you should get familiar with these documents. They provide the first real insight you'll probably see into all of the financials of your company, as well as who the largest share holders are.
+
+The motivation for selling shares varies from company to company, but generally it's required to grow workforce, stay afloat, for protection (buying competition), etc. All the typical reasons that you can imagine a company might need a chunk of cash.
+
+h5. QUIET PERIOD
+
+After the S-1 is filed, the company enters a quiet period. This is a period of time where the SEC gathers information, makes sure that everyone has access to the same information, and makes the S-1 &quot;effective&quot;. During this time, changes to the S-1 will be filed (based on new information that might come available), and employees are required to say absolutely nothing about the company, the filing, etc. Any information that leaks out and is not in the S-1 can result in a lot of bad things happening including firing employees that leaked the information, delaying the IPO, etc. The idea, here, is to make it so that everyone, publicly, has the same amount of information available (to prevent insider trading).
+
+h5. REPRICING
+
+Companies will typically re-price their IPO shares (upwards) in the weeks leading up to the IPO. Usually, this is a result of increased demand from the market makers, but it also serves the purpose of building hype.
+
+h5. LOCK-UP PERIOD
+
+When a company has an IPO, there is typically a period where employees are unable to exercise or trade the shares that they own. This period typically lasts between three and six months from the IPO date. The motivation for this is to provide price stability, and prevent shares from flooding the market too quickly. This means, when a company like Facebook goes public, the employees are not selling their shares immediately, and have no more money in their bank account the day after the IPO than they did the day before. Instead, it's the bankers and VCs that are selling shares early on.
+
+One exception to this rule is that some companies will offer their employees the chance to participate in the offering, itself, even though they are locked up. In this scenario, employees might be given the chance to sell some percentage of shares on the day of the IPO. The caveat here is that the employees will not be selling their shares on the open market. They will be selling them to Wall Street market makers at a reduced price compared to the opening. This is a pretty rare opportunity, I've heard, but it does happen.
+
+h5. SECONDARY OFFERING
+
+Sometimes, a company that has gone public will file for a secondary offering. This is, essentially, the opportunity for the company to sell more of its shares on the open market. There are generally two reasons that a company might want to do this:
+
+# To prevent stock volatility when a lock-up period expires.
+# To raise more money if the stock is doing well.
+
+You might be wondering how a secondary offering can affect the volatility of a newly IPO'd stock. When a lockup-period expires, a flood of shares that have been illiquid will suddenly become liquid. In the case of Facebook, for instance, &quot;270 million new shares&quot;:http://money.cnn.com/2012/08/15/technology/facebook-lockup/index.html will become available on the market in a single day. On average, 46 million shares of Facebook are traded per day. You can bet that the lockup expiration will have an affect on the share price that day.
+
+To prevent all shares from flooding the market at once, a company can get some of its institutional investors to participate in a secondary offering. In this case, the company and its institutional investors will agree to sell some of their shares to investment bankers at a slight discount to the current market price. These bankers will then be locked up for a further period of time (but get a discount off the current market value). If you compound this with the initial lockup, it means that the company can stage dumping of its shares across a longer timespan (IPO, lock-up expiration, secondary offering), which increases the stability of the stock.
+
+h5. BLACKOUTS
+
+After a company has gone public, it will go into its normal quarterly announcements, where it'll post it's financials, and any other interesting news, to Wall Street. During the blackout period, which can last anywhere from a few weeks to a couple of months (depending on your company, your individual access to data, etc) employees will not be allowed to trade any of the company's shares (either buying or selling) to prevent insider trading.
+
+One way to get around this is to fill out a &quot;10b5-1&quot;:http://en.wikipedia.org/wiki/SEC_Rule_10b5-1 form. This is an SEC form that allows you to set up a pre-made schedule that can execute during blackout periods. You can generally set up pretty sophisticated rules, and work with the broker that your company uses (e.g. E-Trade, Schwab, etc) to get your 10b5-1 in place. Typically, executives use these, since they are almost always blacked out since they know a lot about what's going on, and don't want to risk insider trading.
+
+h5. WALL STREET
+
+To sell IPO shares, a company typically employs underwriters. Underwriters are basically a group of banks that buy the pre-IPO shares from the company, and then turn around and sell them on the public market. The motivation for this is that the underwriters are the ones that incur risk in the case were there turns out to be no market for the shares (people aren't buying them). In that case, the banks end up holding shares of the company for longer than they'd like.
+
+This has a number of cushy side effects. First, underwriters have a pretty strong strangle-hold on the market, and tend to charge between 5% and 7% for the courtesy of flipping a company's shares. Second, underwriters typically provide pre-IPO shares to some of their important investors. Basically, this tends to be free money (if the IPO has a bump in price on opening day) for people who are generally pretty wealthy already (when was the last time your bank called you to offer you an opportunity in pre-IPO shares?).
+
+Facebook and Google are both interesting cases in this area. An alternative to using the typical under-writing system is to do what's called a dutch auction, which is the route Google took. From &quot;Wikipedia&quot;:http://en.wikipedia.org/wiki/Initial_public_offering#Dutch_Auction, &quot;This auction method ranks bids from highest to lowest, then accepts the highest bids that allow all shares to be sold, with all winning bidders paying the same price.&quot; This is much more friendly to the company, since they tend to get a price that's closer to what would be offered on the public market. Similarly, because of demand from banks, Facebook was able to play hardball, and threaten to dutch auction, if they did not get their shares underwritten at a much lower percentage. I believe the number that I heard was 1.1% (see &quot;Reuters&quot;:http://www.reuters.com/article/2012/03/20/net-us-facebook-ipo-idUSBRE82I15N20120320), which is virtually unheard of.
+
+h5. OPENING BELL
+
+When a company's shares trade for the first time on the market, there is typically a period after the opening bell where the shares are not actually being traded. That is, the &quot;sell&quot; offers are far too high above the &quot;buy&quot; offers. As an example, if a company uses banks as underwriters, the underwriters will sell the shares. After that, its up to the owners of the shares to buy and sell on the open market. If the owners of the shares want to sell for $100 a share, and buyers are only willing to pay $50 per share, the stock isn't traded, and the market is in a stalemate. After some period of time (an hour or two, usually), the market converges (the buy orders come up, and the sell orders come down), and shares begin trading hands.
+
+Generally, on the day of an IPO, if under-writers are used (the common case), one of two things can happen: the shares close up, or the shares close flat.
+
+If the shares close up, this can mean a few things. In general, the press coverage is positive, and it looks like the market believes in the company. It can also mean that the company left money on the table. For example, if a company sells its shares to underwriters at $30 a share, and the underwriters sell the shares on the market at $50, and the shares close at $100 at the end of the first day, it's likely that the company could have sold the shares for a lot more (say $40-$50 a share). If the company had sold the shares for more, they would have more cash in the bank at the end of the day.
+
+If, on the other hand, the shares close flat, it means that the company got as much money as they could out of the market, and their bank accounts are about as high as they could theoretically be. The downside is that the press coverage will generally be a little more negative. It also means that the underwriters likely had to buy back the shares. This is a deal that most underwriters agree to when the company sells them shares. Essentially, only for the day of the IPO, the underwriters are required to buy back any stock that's for sale below the IPO price. This is &quot;precisely what happened with Facebook&quot;:http://articles.latimes.com/2012/may/18/business/la-fi-tn-facebook-trading-20120518. Morgan Stanley was forced to buy back shares on the day of the IPO. What this means is that the market believes the shares are worth less than their IPO price, and the underwriter will end up paying more for the stocks than they're worth. The underwriters are then forced to hold the shares until the price comes up, or sell the stock (after the day of the IPO) at a loss.
+
+h5. SELLING SHARES AFTER AN IPO
+
+After the dust settles, the lock-up ends, and the secondary offering does (or does not) happen, employees of the company are left to exercise their options, and sell their shares. For early employees, their options' strike price (the price that employees must pay to buy their shares) is likely relatively low. For example, if you were an early employee, you might get stock options at your company for 50 cents per share. If, post-IPO, the shares are trading at $50 per share, that means that, when you exercise your options, you must pay 50 cents per share (1% of the stock price). For later employees, their strike price is likely much higher, or they simply have restricted stock units (see below).
+
+Wealthfront, again, has two really great posts on &quot;divesting shares&quot;:https://blog.wealthfront.com/silicon-valley-new-rich-financial-planning/ and &quot;selling strategies&quot;:https://blog.wealthfront.com/should-i-sell-my-stock/. In addition, I also highly recommend &quot;Bogleheads' Guide to Investing&quot;:http://www.amazon.com/Bogleheads-Guide-Investing-Taylor-Larimore/dp/0470067365. Most of it is pretty common sense stuff, but it's worth it to read it, and consider your options (no pun intended).
+
+h5. RESTRICTED STOCK
+
+In the later stages of a pre-IPO company, and for most larger companies, it's likely that employees will receive restricted stock units (RSUs), rather than options. Unlike options, restricted stock has no strike price; you just get the shares for free. Typically, you will receive far fewer RSUs than you would receive options, but they are far less risky, as you will never be &quot;underwater&quot;. The term, &quot;underwater,&quot; refers to stock options whose strike price is higher than the current market value of the stock, thus making it almost worthless. For example, if a share can be bought for $30 on the public market, and you hold options that have a strike price of $50, it makes no sense to exercise your option to buy the share at $50, when you could buy it for $30. RSUs don't carry this risk. In terms of valuing RSUs vs options (since some companies offer both), I've heard that Yahoo! employees typically used a 3x multiplier when receiving shares. That is, they would ask for 300 options instead of 100 RSUs. This is just what I've heard, but it seems fairly reasonable. As usual, &quot;see Quora for more information&quot;:http://www.quora.com/What-are-the-trade-offs-between-restricted-stock-units-(RSUs)-and-stock-options-as-start-up-employee-compensation.
+
+h5. TAXES
+
+Once you've sold your shares, you'll need to pay taxes. There is typically one major thing to consider when looking at taxes: how much time has passed between the time that you received the shares, and when you sold them. The reason that this is important is because of the &quot;capital gains tax&quot;:http://en.wikipedia.org/wiki/Capital_gains_tax. If you hold your shares for more than a year, the income is treated as capital gains, which, in the United States, is currently taxed by the federal government at 15%. If, on the other hand, you hold your shares for less than a year, you pay normal income tax, which can go up to 35%. If your shares are worth $1 million, this is the difference between $150,000 and $350,000 in income tax, which is huge.
+
+I'm not going to get into the nuances of this subject, as it's quite complicated. &quot;Read&quot;:http://www.quora.com/What-are-the-tax-implications-of-joining-a-startup-as-an-equity-partner &quot;these&quot;:http://www.startupcompanylawyer.com/2008/02/15/what-is-an-83b-election/ &quot;posts&quot;:http://www.quora.com/Startups/If-youre-in-a-startup-is-it-ever-a-good-idea-to-exercise-your-options-early-Why-or-why-not, and consult a tax advisor. It can make a huge difference. Also, beware of quarterly tax filings.
+
+h5. TRICKS
+
+I thought it'd be neat to include a couple of other fun tidbits. Did you ever wonder how Romney ended up with &quot;$100 million in a tax-protected IRA&quot;:http://www.boston.com/news/politics/articles/2012/08/11/mitt_romneys_ira_is_unlikely_centerpiece_of_wealth_and_tax_avoidance/? Basically, there are some &quot;tricks that you can play&quot;:http://blogs.reuters.com/felix-salmon/2012/07/16/did-romney-put-bain-capital-shares-in-his-ira/ that allow you to put very cheap shares of an early stage company into your IRA (at a very low valuation). If that company's valuation then rises, and the shares become liquid, you can cash out, and have a huge chunk of savings grow tax free in an IRA.
+
+Another neat benefit that executives get are interest free loans when they join. Why might they need such a loan? Well, among other things, &quot;to purchase all of the shares that are offered to them&quot;:http://scholarship.law.wm.edu/cgi/viewcontent.cgi?article=1344&amp;context=facpubs at the time that they join. This starts the clock on the one year capital gains threshold, which drastically reduces their tax basis. Typically such loans are only ever re-paid if the shares become liquid, and the executive cashes out. Pretty good deal.
+
+h5. FURTHER READING
+
+* &quot;AVC: Musings of a VC in NYC&quot;:http://avc.com
+* &quot;Feld Thoughts&quot;:http://www.feld.com/
+* &quot;Ask the VC&quot;:http://www.askthevc.com/
+* &quot;Both Sides of the Table&quot;:http://www.bothsidesofthetable.com/
+* &quot;VC Adventure&quot;:http://www.sethlevine.com/
+* &quot;Steve Blank&quot;:http://steveblank.com/
+* &quot;Wealthfront Blog&quot;:http://blog.wealthfront.com</description>
+				<pubDate>Mon, 22 Oct 2012 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/social/2012/10/22/tech-exits-what-you-should-know.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/social/2012/10/22/tech-exits-what-you-should-know.textile</guid>
+			</item>
+		
+			<item>
+				<title>Hortonworks YARN Developer Meetup Notes (October '12)</title>
+				<description>h5. What is YARN
+
+YARN is a generic cluster-scheduler for managing executing processes in a distributed environment. YARN is going to be used in Hadoop's next-generation Map/Reduce framework. For more, have a look at &quot;this page&quot;:http://hadoop.apache.org/docs/r0.23.0/hadoop-yarn/hadoop-yarn-site/YARN.html.
+
+h5. Building Applications on YARN
+
+I presented this deck &quot;at the meet-up&quot;:http://www.meetup.com/Hadoop-Contributors/events/85353562/. My focus was mostly on the architecture of a YARN application, design decisions that need to be made, and the trade-off between high and low coupling with Hadoop (HDFS, Kerberos, metrics2, Configuration, etc).
+
+&lt;iframe src=&quot;http://www.slideshare.net/slideshow/embed_code/14721401&quot; width=&quot;476&quot; height=&quot;400&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot;&gt;&lt;/iframe&gt;
+
+One thing that I wish I'd included in this presentation was a slide on testing. This is an area where Map/Reduce has fallen short, traditionally, and it's unfortunate, because M/R jobs could be so easily mock-able and unit-testable. My take aways are:
+
+* It's annoying to test your AM but you really need to do it.
+* Make your APIs easily mockable. Pay *close* attention to mock-ability of the storage layer.
+
+Another minor note regarding the logging slide: The NMs can be configured to post logs to locations other than HDFS servers (for example, HTTP servers), so there is an alternative to letting your logs expire on the NM machine if you're not running HDFS. This is done by specifying an HTTP path instead of an HDFS one.
+
+Lastly, regarding the orphaned subprocess section, you might want to have a look at my previous post: &quot;Killing Subprocesses in Linux/Bash&quot;:http://riccomini.name/posts/linux/2012-09-25-kill-subprocesses-linux-bash/
+
+h5. Highlights
+
+There was a really interesting request from someone: NodeManager labels (e.g. &quot;gpu&quot;, &quot;flash disk&quot;, etc). This would allow ApplicationMasters to do resource requests based on lables. For example, &quot;Only give me containers on nodes with flash disks.&quot; With this feature, you could even partition YARN clusters in this way (e.g. &quot;map-red&quot; label vs &quot;storm&quot; label).
+
+A lot of gripes from users were about how clunky the API was for interacting with the RM and NM. The YARN developers are really aware of this, and were asking for a lot of feedback. I was really excited to hear discussion about a call-back based API for AMs. This would eliminate, or at least hide, the current 'poll the RM' style AMs that are being written. Instead, AMs would just receive method callbacks for things like onNewContainer, onContainerKilled, etc. On the client side, Arun and Vinod also mentioned some improvements in the Client API.
+
+Yahoo's presentation had a few pros and cons that I strongly agreed with. They said that YARN was 'surprisingly stable'. I definitely agree with this. Aside from an issue we had with it on truck, a year ago, I haven't seen any bugs in it. On the con side, Yahoo mentioned the lack of a generic log-history server, as well as difficulty debugging ApplicationMasters.
+
+Regarding debugging ApplicationMasters, in 2.0.2, a new feature, called 'Unmanaged AM' has been added to test AMs locally by emulating the RM. To test your AM locally, you execute a command like, &quot;yarn am &amp;lt;class&amp;gt;&quot;. The coolest part of this feature is that the containers will still execute on the real cluster; only your AM will be local. This should allow for &quot;real world&quot; testing of your AM.
+
+Another minor request that I had was to add job tagging, so clients could tag their jobs as &quot;map-reduce&quot;, &quot;storm&quot;, &quot;s4&quot;, etc. This makes it easier for dashboards to deal with mix-worload YARN clusters, where showing certain jobs in a dashboard doesn't make sense.
+
+h5. Yahoo's experience with YARN and 0.23
+
+* The good:
+** Running on a 0.23.3 on a 2000 node cluster.
+** Suprisingly stable.
+** 150,000 jobs run.
+** Validated isolated tests on 10,000 nodes.
+** Big win is web services. Had been scraping pages, and now it's in HTTP/REST.
+** Higher utilization with no fixed partitioning between mappers and reducers.
+** Performance is on-par/better at everything (Read, sort, shuffle, gridmix, small jobs).
+** Other paradigms looking into (Spark, MPI, S4, Storm, Giraph)
+** Question: Has anyone thought about open graph (MPI-related)?
+* The not so good:
+** Oozie on YARN can have deadlocks when queues are mis-configured
+** UI scalability issues (very large tables, and pagination in JS)
+** Minor incompatibilities in distributed cache
+** No generic history server
+** AM failures hard to debug
+* Will be installing it on a 3600 node cluster next week
+
+Follow up about posting logs back to HTTP.
+
+h5. Future work
+
+Arun and Vinod presented on future work.
+
+* Multiple resource dimensions (priority, memory, cpu, data locality, etc) when making your request
+* Complaints about existing ClientRMProtocol, AMRMProtocol, ContainerMAnagerProtocol
+** How does RM/NM prioritize resource requests with multiple dimensions? By host/rack? By memory? CPU?
+** Release/reject of containers: you can go to either RM or NM to reject. Which do I do? API is confusing.
+** Ask for specific nodes/racks (pin jobs to specific hosts)
+** Black list certain racks/nodes. Can't do this now.
+** Overload allocate call. Want more specific API rather than generic one (getSatuts, killContainer, etc).
+** Gang scheduling is a pending improvement. &quot;I need all 10 containers, or none.&quot;
+* Resources
+** Want to recognize # of cores on the system, not just memory, when requesting resources. (CPU support).
+
+</description>
+				<pubDate>Fri, 12 Oct 2012 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/hadoop/2012/10/12/hortonworks-yarn-meetup.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/hadoop/2012/10/12/hortonworks-yarn-meetup.textile</guid>
+			</item>
+		
+			<item>
+				<title>Kafka Consumer Memory Tuning</title>
+				<description>Yesterday, I had a process that was consuming a single Kafka topic. I was running it in our &quot;staging&quot; environment, and everything worked great. My heap space for the process was set to 512 megabytes (-Xmx512M). When I moved this process to production, my process would fail with an out of memory exception. I was seeing:
+
+bc. java.lang.OutOfMemoryError: Java heap space
+BoundedByteBufferReceive [ERROR] OOME with size 4800026
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+FetcherRunnable [ERROR] error in FetcherRunnable
+
+Let's review what happened, and how to fix it.
+
+h5. BUFFERS
+
+When you create a Kafka consumer, you first instantiate a Kafka connector (&quot;ConsumerConnector.scala&quot;:https://github.com/kafka-dev/kafka/blob/master/core/src/main/scala/kafka/consumer/ConsumerConnector.scala). Then, you create multiple threads that feed off of one or more topics:
+
+bc. // create 4 partitions of the stream for topic &quot;test&quot;, to allow 4 threads to consume
+Map&lt;String, List&lt;KafkaStream&lt;Message&gt;&gt;&gt; topicMessageStreams = 
+    consumerConnector.createMessageStreams(ImmutableMap.of(&quot;test&quot;, 4));
+List&lt;KafkaStream&lt;Message&gt;&gt; streams = topicMessageStreams.get(&quot;test&quot;);
+
+Internally, Kafka creates a buffer for each thread attached to the ConsumerConnector. In this case, there are four threads, and therefore four buffers. These buffers, which are queues, are populated asynchronously until they are &quot;full&quot;. When your code reads from a stream, Kafka dequeues from the stream/thread's queue, and gives you a message. 
+
+h5. TUNING MEMORY USAGE
+
+Two important questions arise from this:
+
+# When are the queues full?
+# What are the queues populated with?
+
+A queue is full when it reaches the configured maximum queue size (queuedchunks.max). That is, if queuedchunks.max=10, then the queue will be full when 10 objects are in it.
+
+This leads me to question number two: What are these objects that the queue is populated with? It turns out, *they are not messages*. Instead, they are fetched byte buffers that contain *multiple messages*. The size of these byte buffers is determined by the configuration parameter: fetch.size.
+
+So, to calculate how much memory your consumer is going to take, you have to use this formula:
+
+bc. (number of consumer threads) * (queuedchunks.max) * (fetch.size)
+
+For example, if you have 24 threads, a max queue size of 10, and a fetch.size of 1.2 megabytes, your consumer is going to take 288 megabytes of heap space (24 threads * 10 fetches * 1.2 megabytes/fetch) if all queues are full.
+
+If you run out of space, you have a few options: increase heap space, reduce your consumer threads, or lower your fetch size or max queue size. Obviously, different tunings have different affects on your throughput. With fewer buffers, or fewer fetches per queue, you might negatively impact your throughput.
+
+h5. WHAT HAPPENED TO MY PROCESS
+
+The number of threads in my process was dependent on how many partitions the topic had that I was consuming from. When I moved from staging to production, the Kafka cluster I was consuming from had far more brokers, and far more partitions per topic. As a result, the memory footprint of my process drastically changed. I went from 22 threads to 32, which changed my heap usage from 264 megabytes to 384 megabytes. This was enough to set my process' total memory usage over 512 megabytes, which caused the out of memory exceptions.</description>
+				<pubDate>Fri, 05 Oct 2012 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/kafka/2012/10/05/kafka-consumer-memory-tuning.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/kafka/2012/10/05/kafka-consumer-memory-tuning.textile</guid>
+			</item>
+		
+			<item>
+				<title>Schedules & Scores API for Streaming Live Sports Stats</title>
+				<description>h5. WHAT I NEEDED
+
+# Daily game schedules for MLB, NBA, NFL, and NHL (the big four).
+# Scores and times for MLB, NBA, NFL, and NHL. Can be delayed a minute or two.
+
+I did a bit of reading, and found a few relevant Quora discussions:
+
+* &quot;What options are there for streaming sports stats APIs?&quot;:http://www.quora.com/What-options-are-there-for-streaming-sports-stats-APIs
+* &quot;Are there any APIs with game schedules available for NFL, NCAA FB, NBA, NCAA BB, and MLB teams?&quot;:http://www.quora.com/Are-there-any-APIs-with-game-schedules-available-for-NFL-NCAA-FB-NBA-NCAA-BB-and-MLB-teams
+
+After some research, I was able to get the data I needed for free via either of two sources: MSNBC or ESPN. Later, I decided that I wanted a more secure/legitimate/reliable method of getting score data, so I switched to a pay service called XML Live Scores. I've decided to document my experience in this post.
+
+I encourage you not to abuse the free APIs by polling them too frequently.
+
+h5. ESPN (FREE)
+
+As I said, when I first started out, I was interested in a free solution. I found a few nice write-ups on how to get the scores from ESPN.
+
+* &quot;http://www.wecodethings.com/blog/post.cfm/free-nfl-live-scores-feed-using-coldfusion-can-be-used-for-nba-ncaa-nhl-golf-scores-feed&quot;:http://www.wecodethings.com/blog/post.cfm/free-nfl-live-scores-feed-using-coldfusion-can-be-used-for-nba-ncaa-nhl-golf-scores-feed
+* &quot;http://www.dbstalk.com/archive/index.php/t-207334.html&quot;:http://www.dbstalk.com/archive/index.php/t-207334.html
+
+It turns out, ESPN has a little app called &quot;BottomLine&quot;:http://espn.go.com/bottomline/, which makes HTTP requests to a few endpoints to get live sports data. This data is very easy to parse. Here are a few examples:
+
+* &quot;http://sports.espn.go.com/nfl/bottomline/scores&quot;:http://sports.espn.go.com/nfl/bottomline/scores
+* &quot;http://sports.espn.go.com/nba/bottomline/scores&quot;:http://sports.espn.go.com/nba/bottomline/scores
+* &quot;http://sports.espn.go.com/mlb/bottomline/scores&quot;:http://sports.espn.go.com/mlb/bottomline/scores
+* &quot;http://sports.espn.go.com/nhl/bottomline/scores&quot;:http://sports.espn.go.com/nhl/bottomline/scores
+* &quot;http://sports.espn.go.com/ncf/bottomline/scores&quot;:http://sports.espn.go.com/ncf/bottomline/scores
+* &quot;http://sports.espn.go.com/rpm/bottomline/race&quot;:http://sports.espn.go.com/rpm/bottomline/race
+* &quot;http://sports.espn.go.com/sports/golf/bottomLineGolfLeaderboard&quot;:http://sports.espn.go.com/sports/golf/bottomLineGolfLeaderboard
+* &quot;http://sports.espn.go.com/wnba/bottomline/scores&quot;:http://sports.espn.go.com/wnba/bottomline/scores
+* &quot;http://sports.espn.go.com/espn/bottomline/news&quot;:http://sports.espn.go.com/espn/bottomline/news
+
+As you can see, the data is just URL encoded values. Everything here is pretty much live.
+
+h5. LEAGUE SITES (FREE)
+
+Each league (NBA, NFL, NHL, MLB) exposes live scores on their website. All of these guys use AJAX, which means it's possible to yank out the call that they're using, and make the call yourself, programmatically. Here are some relevant end points:
+
+* &quot;NBA&quot;:http://data.nba.com/data/10s/xml/nbacom/2012/scores/playoffs/series_matchup_us.xml
+* &quot;NHL&quot;:http://live.nhle.com/GameData/RegularSeasonScoreboardv3.jsonp
+* &quot;NFL&quot;:http://www.nfl.com/liveupdate/scorestrip/scorestrip.json
+* &quot;MLB&quot;:http://gd2.mlb.com/components/game/mlb/year_2012/month_05/day_15/master_scoreboard.json
+
+You will have to reverse engineer the format of the data, but it's usually pretty straight forward. I didn't bother with this solution because polling these end points is usually a violation of the terms of service for the respective league, and I didn't want to have a per-league score parser.
+
+h5. MSNBC (FREE)
+
+Another alternative that I found, but have not seen documented anywhere, is to use MSNBC's live scores. Nearly all news outlets have live scores for sports, so all you need to do is find one that's making AJAX calls to refresh the scores, and pull out the URL that they're using. The one with the easiest formatting was MSNBC.
+
+* &quot;MSNBC Scores&quot;:http://scores.nbcsports.msnbc.com/ticker/data/gamesMSNBC.js.asp?jsonp=true&amp;sport=MLB&amp;period=20120929
+
+When looking at the MSNBC scores in the browser, make sure to view the source, since they have XML encoded in JSON (sigh).
+
+This is the route that I ended up using for free scores. Unlike ESPN's API, which is a bit clunky, MSNBC provides a nice JSON interface. I polled these scores once every 30 seconds, in rotation (MLB, wait 30s, NBA, wait 30s, NFL, wait 30s, etc). Here's some example code (in Python) to get live scores:
+
+&lt;script src=&quot;https://gist.github.com/3805436.js&quot;&gt; &lt;/script&gt;
+
+I should note that I'm using a couple of Python libraries for help:
+
+* &quot;pytz&quot;:http://pytz.sourceforge.net/
+* &quot;ElementTree&quot;:http://effbot.org/zone/element-index.htm
+
+Again, this is a violation of their terms of service, so beware.
+
+h5. XML LIVE SCORES (&amp;lt;$300/mo)
+
+These are the guys that I use now. Their API is reasonably reliable, and they are really responsive via e-mail. Strangely, they seem to have two sites:
+
+* &quot;http://xml-livescores.com/&quot;:http://xml-livescores.com/
+* &quot;http://xml-sportsfeeds.com/&quot;:http://xml-sportsfeeds.com/
+
+I contacted them via the first one (&quot;http://xml-livescores.com/&quot;:http://xml-livescores.com/), but their API is on the second one. Here's an example of their XML data.
+
+&lt;script src=&quot;https://gist.github.com/3805418.js&quot;&gt; &lt;/script&gt;
+
+To get the data, an HTTP request is made:
+
+bc. curl http://xml-sportsfeeds.com/xml/baseball/livescore/?key=...
+
+I pay in Euros, via PayPal.
+
+h5. XML TEAM
+
+I spoke with an XML team sales rep, who told me that I could get what I needed using their &quot;FlexSport On Demand&quot;:http://www.xmlteam.com/fod/ package, which is their low-end pay-as-you-go package. This would have worked great if I were just interested in scheduling, but since I wanted near-realtime scores, the cost would have been too great. They wanted something like 25c per league score request, which would have worked out to 25c a minute per league.
+
+h5. FANFEEDR ($3500/mo)
+
+Before using MSNBC, I was actually using &quot;FanFeedr&quot;:http://developer.fanfeedr.com/. At the time, they provided a free API to get live scores, topics, discussion, roster information, etc. Shortly after I began using the site, though, they began charging a minimum of $3,500 a month. Here's &quot;my discussion with them&quot;:http://developer.fanfeedr.com/forum/read/156334.
+
+h5. SPORTS DIRECT (~$4,000/mo)
+
+I got in touch with a guy named John Morash. His response to my inquiry was:
+
+Thanks for getting back to me.  We do have the items that you’re looking for but the cost of our service is much greater than $300/mo.  We’re not at the level of STATS Inc. ($4k+) but feel our product is every bit as good.  We don’t compete on price with some of the low-cost vendors however, so it sounds like there may be another option that’s a better fit for you.
+
+h5. OTHERS
+
+There are some other interesting APIs and sites that I didn't bother looking at. 
+
+* &quot;STATS Inc&quot;:http://www.stats.com/ (the big guys)
+* &quot;Chalk&quot;:http://getchalk.com/
+* &quot;MLB Stats&quot;:http://getchalk.com/</description>
+				<pubDate>Sat, 29 Sep 2012 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/game-time-baby/2012/09/29/streaming-live-sports-schedule-scores-stats-api.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/game-time-baby/2012/09/29/streaming-live-sports-schedule-scores-stats-api.textile</guid>
+			</item>
+		
+			<item>
+				<title>Killing Subprocesses in Linux/Bash</title>
+				<description>Lately, I've been working with &quot;YARN&quot;:http://hadoop.apache.org/docs/r0.23.0/hadoop-yarn/hadoop-yarn-site/YARN.html at LinkedIn. This framework allows you to execute Bash scripts on one or more machines. It's used primarily for Hadoop. When using YARN, you often end up with nested Bash scripts with no parent process ID (PPID) when the NodeManager launches the Bash script. This can be pretty problematic when the NodeManager is shut down, since you must make sure to clean up all child subprocesses via your parent Bash script.
+
+h5. Understanding Linux Subprocesses
+
+Let's start with an example. We'll have two shell scripts: a parent, and a child:
+
+bc. $ cat parent.sh 
+#!/bin/bash
+./child.sh
+
+bc. $ cat child.sh 
+#!/bin/bash
+sleep 1000
+
+Normally, when you launch nested processes from a terminal, you'll see a process tree that looks something like this:
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   10911 10701  0 05:07 pts/1    00:00:00 /bin/bash ./parent.sh
+ubuntu   10912 10911  0 05:07 pts/1    00:00:00 /bin/bash ./child.sh
+ubuntu   10913 10912  0 05:07 pts/1    00:00:00 sleep 1000
+
+In this example, a terminal (PID 10701) calls parent.sh, which calls child.sh, which calls sleep 1000. With YARN, you end up with a process tree that looks more like this:
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   10966     1  0 05:14 pts/1    00:00:00 /bin/bash ./parent.sh
+ubuntu   10967 10966  0 05:14 pts/1    00:00:00 /bin/bash ./child.sh
+ubuntu   10968 10967  0 05:14 pts/1    00:00:00 sleep 1000
+
+Notice that the PPID of parent.sh is now 1. This is essentially a top-level process that has no parent.
+
+h5. Unexpected Behavior
+
+In both of these examples, it seems intuitive that killing the top level parent would result in all of the children being cleaned up. There are a &quot;number of ways to kill a process&quot;:http://en.wikipedia.org/wiki/Kill_(command), so let's start with:
+
+bc. $ kill -9 10966
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   10966     1  0 05:14 pts/1    00:00:00 /bin/bash ./parent.sh
+ubuntu   10967 10966  0 05:14 pts/1    00:00:00 /bin/bash ./child.sh
+ubuntu   10968 10967  0 05:14 pts/1    00:00:00 sleep 1000
+
+As expected, killing the parent does not clean up any children:
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   10967     1  0 05:14 pts/1    00:00:00 /bin/bash ./child.sh
+ubuntu   10968 10967  0 05:14 pts/1    00:00:00 sleep 1000
+
+Let's try sending a kill signal that's not quite as strong as kill -9. For a list of possible signals, try running:
+
+bc. $ kill -l
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
+ 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+63) SIGRTMAX-1  64) SIGRTMAX
+
+Now, let's try this again with a normal &quot;SIGHUP&quot;:http://en.wikipedia.org/wiki/SIGHUP kill. One might expect that sending such a soft kill signal should result in the child processes being cleaned up.
+
+bc. $ kill -SIGHUP 10967
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   10968     1  0 05:14 pts/1    00:00:00 sleep 1000
+
+As you can see, even SIGHUP does not kill the child processes; it leaves the sleep call orphaned with a PPID of 1.
+
+So, how can we do this properly?
+
+h5. Traps
+
+One solution is to &quot;use traps&quot;:http://stackoverflow.com/questions/2525855/how-to-propagate-a-signal-through-an-arborescence-of-scripts-bash in the Bash script. A trap is a way to say &quot;do this before exiting&quot; in a Bash script. For example, we might add the following line to parent.sh and child.sh:
+
+bc. trap 'kill $(jobs -p)' EXIT
+
+Now, if we kill the parent, all children will be cleaned up! Obviously, this only works with softer kill signals, such as SIGHUP. For example, if we have this process tree:
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   11049 10758  0 05:31 pts/2    00:00:00 /bin/bash ./parent.sh
+ubuntu   11050 11049  0 05:31 pts/2    00:00:00 /bin/bash ./child.sh
+ubuntu   11051 11050  0 05:31 pts/2    00:00:00 sleep 1000
+
+You can execute:
+
+bc. $ kill 11049
+$ ps -ef | grep sleep
+
+And you will see that sleep is no longer running!
+
+h5. Top-Level Trap
+
+A variation of having a trap in each Bash file is to have a single top-level trap that uses 'ps' to find children:
+
+&lt;script src=&quot;https://gist.github.com/3786342.js&quot;&gt; &lt;/script&gt;
+
+This is a less than ideal solution, but it does work. For details, see &quot;this page&quot;:http://stas-blogspot.blogspot.com/2010/02/kill-all-child-processes-from-shell.html.
+
+h5. Kill PPIDs
+
+Running traps everywhere can be kind of clunky, and error prone. A cleaner approach is to use the kill command, and provide a parent process ID (PPID) instead of a process ID. To do this, the syntax gets funky. You use a negative of the parent process ID, like so:
+
+bc. kill -- -&lt;PPID&gt;
+
+For example, with this process tree:
+
+bc. UID        PID  PPID  C STIME  TTY         TIME CMD
+ubuntu   11096     1  0 05:36 ?        00:00:00 /bin/bash ./parent.sh
+ubuntu   11097 11096  0 05:36 ?        00:00:00 /bin/bash ./child.sh
+ubuntu   11098 11097  0 05:36 ?        00:00:00 sleep 1000
+
+You would run:
+
+bc. kill -- -11096
+ps -ef | grep sleep
+
+As you can see, killing with a PPID automatically cleans all subprocesses, including nested subprocesses!
+
+h5. exec
+
+Another handy trick is to use &quot;exec&quot;:http://linux.die.net/man/3/exec when nesting Bash calls. Exec replaces the &quot;current&quot; process with the &quot;child&quot; process. This doesn't always work, but for our example (parent, child, sleep), it certainly does. Let's make parent and child look like this, respectively:
+
+bc. $ cat parent.sh
+#!/bin/bash
+exec ./child.sh
+
+bc. $ cat child.sh
+#!/bin/bash
+exec sleep 1000
+
+Notice the &quot;exec&quot; command preceding the child.sh and sleep calls. Let's have a look at the process tree:
+
+bc. $ ps -ef | grep parent
+$ ps -ef | grep child
+$ ps -ef | grep sleep
+ubuntu   11155 10758  0 05:41 pts/2    00:00:00 sleep 1000
+
+As you can see, only a 'sleep' process exists. The parent.sh script &quot;becomes&quot; child.sh, and child.sh &quot;becomes&quot; sleep. This makes it very easy to clean up child processes, because there are none! To clean up, you simply kill the 'sleep' process. This is the method that I use with YARN, since I'm executing nested Bash calls that lead to a single Java process.
+
+h5. Python
+
+If you're not strictly tied to Bash, you might be interested in Python's &quot;psutil&quot;:http://code.google.com/p/psutil/ library. It &quot;can be used to kill all subprocess&quot;:http://stackoverflow.com/questions/1230669/subprocess-deleting-child-processes-in-windows for a given process ID.
+
+h5. setsid
+
+One other minor note. You might be wondering how you end up with a PPID of 1. Obviously, kill -9'ing will do it. You can also use a command called &quot;setsid&quot;:http://linux.die.net/man/2/setsid. This is what YARN does when its NodeManager executes a child process. To try and execute parent.sh with a PPID of 1, execute:
+
+bc. setsid ./parent.sh
+
+For further reading, check the &quot;nohup&quot;:http://en.wikipedia.org/wiki/Nohup wiki, which can be used as an alternative to setsid.
+</description>
+				<pubDate>Tue, 25 Sep 2012 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/linux/2012/09/25/kill-subprocesses-linux-bash.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/linux/2012/09/25/kill-subprocesses-linux-bash.textile</guid>
+			</item>
+		
+			<item>
+				<title>Hadoop, Pig, and SQL</title>
+				<description>For more detailed documentation, please see the official &quot;Pig manual&quot;:http://hadoop.apache.org/pig/docs/r0.6.0/piglatin_ref2.html. 
+
+Please feel free to add more examples or documentation in the comments section. 
+
+h5. SELECT
+
+&lt;script src=&quot;https://gist.github.com/3773348.js&quot;&gt; &lt;/script&gt;
+
+h5. JOIN
+
+&lt;script src=&quot;https://gist.github.com/3773349.js&quot;&gt; &lt;/script&gt;
+
+h5. GROUP BY
+
+&lt;script src=&quot;https://gist.github.com/3773351.js&quot;&gt; &lt;/script&gt;
+
+h5. TABLES
+
+&lt;script src=&quot;https://gist.github.com/3773353.js&quot;&gt; &lt;/script&gt;
+
+h5. LINKS
+
+&quot;Pig 0.6 manual&quot;:http://hadoop.apache.org/pig/docs/r0.6.0/piglatin_ref2.html
+</description>
+				<pubDate>Sat, 27 Mar 2010 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/hadoop/2010/03/27/hadoop-pig-sql-documentation.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/hadoop/2010/03/27/hadoop-pig-sql-documentation.textile</guid>
+			</item>
+		
+			<item>
+				<title>BlackBerry Storm GPS</title>
+				<description>h5. BLACKBERRY GPS MAINSCREEN
+
+BBTMainScreen is a main screen class that tracks a user's GPS location. The class sends updates every 10 seconds to LOCATION_URL. The most important (and most difficult) part to figure out is how to configure your Criteria and LocationListener. If these aren't configured properly, the Storm will disable its GPS listener temporarily. 
+
+*Please copy the resetGPS() criteria/location listener settings EXACTLY as they are shown.*
+
+&lt;script src=&quot;https://gist.github.com/3773117.js&quot;&gt; &lt;/script&gt;
+
+h5. SIGNING YOUR CODE
+
+If you run the above code on your BlackBerry Storm, you will get a &quot;GPS not allowed&quot; LocationProvider exception. You need to get your code signed if you want to use the BlackBerry Storm with GPS in your app. To do this, you need to buy a $20 certificate from RIM. 
+
+After you get your certificate, you need to sign your .cod file using &quot;Signature Tool&quot;. Before you do this, you need to change your .csi file. For some reason, BlackBerry does not properly configure the .csi file to include ALL requirements. It took me a long time to figure this out. Your .csi file should look like this.
+
+bc. 33000000=RIMAPPSA2
+52424200=RIM Blackberry Apps API
+52434300=RIM Crypto API - Certicom
+52434900=RIM Crypto API - Internal
+52435200=RIM Crypto API - RIM
+52525400=RIM Runtime API
+
+h5. TESTING
+
+After your code is signed, you can put it on to your BlackBerry, and run it. Running the code should show you your long/lat. If it gives you 0/0, or -1/-1 at first, wait for a minute or two. Resolving the GPS location can take a minute. 
+
+h5. LINKS
+
+&quot;My Last BlackBerry GPS Post&quot;:http://www.riccomini.name/Topics/Mobile/BlackBerry/BlackBerryStormGPS/
+&quot;My BlackBerry Support Forum Post&quot;:http://supportforums.blackberry.com/rim/board/message?board.id=java_dev&amp;thread.id=11845&amp;view=by_date_ascending&amp;page=1
+</description>
+				<pubDate>Mon, 22 Mar 2010 00:00:00 -0700</pubDate>
+				<link>/archive/posts.old/posts/blackberry/2010/03/22/blackberry-storm-gps.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/blackberry/2010/03/22/blackberry-storm-gps.textile</guid>
+			</item>
+		
+			<item>
+				<title>Exploring the Twitter Stream</title>
+				<description>h5. DATA SIZE
+
+747,349 tweets in ~10.5 hours for a total raw size of 925M. 
+
+h5. GEOLOCATION DATA
+
+1,723 geo tagged tweets out of 747,349 total tweets (0.23%). 
+
+h5. URLS
+
+151,858 tweets with a url out of 747,349 total tweets (0.20%). 
+
+By the way, an easy way to unshorten URLs is to use Python's urllib2.urlopen(url).geturl() command. Works like a charm, though I'm not sure if it fetches the entire page. I hav e a sneaking suspicion that it does. 
+
+h5. POPULAR 2-WORD PAIRS
+
+|_. Phrase |_. Count |
+| on my | 2981 |
+| to go | 3037 |
+| need to | 3074 |
+| ulive on | 3086 |
+| will be | 3111 |
+| i can | 3112 |
+| have to | 3165 |
+| are you | 3179 |
+| but i | 3263 |
+| is the | 3311 |
+| paramoreinpoland paramoreinpoland | 3315 |
+| in a | 3344 |
+| want to | 3534 |
+| i know | 3546 |
+| and i | 3570 |
+| is a | 3914 |
+| at the | 4153 |
+| to get | 4223 |
+| i was | 4246 |
+| for a | 4328 |
+| have a | 4340 |
+| i think | 4400 |
+| if you | 4559 |
+| i dont | 4897 |
+| i am | 4905 |
+| going to | 5024 |
+| i just | 5041 |
+| i have | 5249 |
+| to be | 5404 |
+| i love | 6108 |
+| to the | 6407 |
+| of the | 7754 |
+| for the | 7945 |
+| on the | 8325 |
+| in the | 10890 |
+
+h5. POPULAR 3-WORD PAIRS
+
+|_. Phrase |_. Count |
+| i wish i | 534 |
+| haiti to 90999 | 548 |
+| i feel like | 549 |
+| i need a | 552 |
+| to be a | 596 |
+| unew blog post | 618 |
+| i favorited a | 637 |
+| favorited a youtube | 637 |
+| going to be | 640 |
+| meu resultado foi | 647 |
+| e meu resultado | 647 |
+| acabo de completar | 649 |
+| i just took | 651 |
+| uvote too \u2794 | 673 |
+| video chat with | 693 |
+| other people at | 693 |
+| cant wait to | 707 |
+| check it out | 717 |
+| joined a video | 720 |
+| a video chat | 720 |
+| i think i | 724 |
+| just joined a | 729 |
+| to go to | 741 |
+| one of the | 764 |
+| a lot of | 786 |
+| for the ff | 821 |
+| i dont know | 836 |
+| i have to | 851 |
+| im going to | 875 |
+| i have a | 912 |
+| pants on the | 966 |
+| i need to | 1018 |
+| on the ground | 1059 |
+| i want to | 1066 |
+| aka aka aka | 1147 |
+| a youtube video | 1180 |
+| i love you | 1216 |
+| thanks for the | 1635 |
+| paramoreinpoland paramoreinpoland paramoreinpoland | 2745 |
+
+h5. POPULAR 4-WORD PAIRS
+
+|_. Phrase |_. Count |
+| 5 out of 5 | 202 |
+| a youtube video 5 | 202 |
+| what do you think | 216 |
+| to donate 10 to | 219 |
+| 90999 to donate 10 | 225 |
+| the people of haiti | 225 |
+| to the red cross | 229 |
+| i rated a youtube | 234 |
+| rated a youtube video | 234 |
+| thank you for the | 236 |
+| uacabo de completar qual | 237 |
+| out of 5 stars | 240 |
+| i just took what | 253 |
+| cant wait to see | 258 |
+| a twibbon to your | 266 |
+| to your avatar now | 266 |
+| twibbon to your avatar | 266 |
+| add a twibbon to | 267 |
+| nowplaying nowplaying nowplaying nowplaying | 273 |
+| to 90999 to donate | 273 |
+| on my way to | 274 |
+| check this video out | 284 |
+| haiti to 90999 to | 287 |
+| i uploaded a youtube | 302 |
+| uploaded a youtube video | 303 |
+| text haiti to 90999 | 366 |
+| a shorty award in | 423 |
+| for a shorty award | 431 |
+| thanks for the ff | 533 |
+| favorited a youtube video | 637 |
+| i favorited a youtube | 637 |
+| e meu resultado foi | 647 |
+| a video chat with | 691 |
+| just joined a video | 720 |
+| joined a video chat | 720 |
+| pants on the ground | 873 |
+| aka aka aka aka | 1049 |
+| paramoreinpoland paramoreinpoland paramoreinpoland paramoreinpoland | 2182 |
+
+h5. WORDS PER TWEET
+
+|_. Number of Words |_. Count |
+| 0 | 33504 |
+| 1 | 30815 |
+| 2 | 39865 |
+| 3 | 35435 |
+| 4 | 36727 |
+| 5 | 38331 |
+| 6 | 38839 |
+| 7 | 38550 |
+| 8 | 37510 |
+| 9 | 35866 |
+| 10 | 34127 |
+| 11 | 32280 |
+| 12 | 31443 |
+| 13 | 28307 |
+| 14 | 26469 |
+| 15 | 25015 |
+| 16 | 23747 |
+| 17 | 23304 |
+| 18 | 22619 |
+| 19 | 21676 |
+| 20 | 20552 |
+| 21 | 19002 |
+| 22 | 17018 |
+| 23 | 14555 |
+| 24 | 12241 |
+| 25 | 10194 |
+| 26 | 7494 |
+| 27 | 5094 |
+| 28 | 3213 |
+| 29 | 1761 |
+| 30 | 951 |
+| 31 | 455 |
+| 32 | 205 |
+| 33 | 97 |
+| 34 | 32 |
+| 35 | 19 |
+| 36 | 18 |
+| 37 | 8 |
+| 38 | 8 |
+| 39 | 1 |
+| 51 | 1 |
+
+h5. POPULAR HASH TAGS
+
+|_. Hash |_. Count |
+| #wwfm | 240 |
+| #helphaiti | 249 |
+| #jerseyshore | 251 |
+| #bbb10 | 266 |
+| #twibbon | 268 |
+| #deleteyouraccount | 270 |
+| #quote | 274 |
+| #tweetmyjobs | 282 |
+| #bbb | 295 |
+| #epicpetwars | 300 |
+| #news | 315 |
+| #masen | 315 |
+| #1 | 332 |
+| #twitterpelis | 376 |
+| #shoutout | 377 |
+| #follow | 381 |
+| #venezuela | 403 |
+| #cbb7 | 428 |
+| #fail | 461 |
+| #sega | 473 |
+| #endondeestas | 527 |
+| #patdinlatinamerica | 546 |
+| #ifyoucheatonme | 563 |
+| #tcot | 673 |
+| #omgfacts | 712 |
+| #iwouldhatetobeyou | 744 |
+| #supportdannymcfly | 859 |
+| #supportdannyjones | 862 |
+| #fb | 1052 |
+| #jobs | 1141 |
+| #followfriday | 1801 |
+| #aka | 1882 |
+| #waystoannoypeople | 2072 |
+| #haiti | 2148 |
+| #nowplaying | 3479 |
+| #paramoreinpoland | 3915 |
+| #ff | 11354 |
+
+h5. TF-IDF
+
+The first step in determining related tweets for me was to simply determine what topics I was interested in. I initially applied TF-IDF to my tweet stream to determine the most important keywords. This turned out to work fairly well. I got keywords such as Hadoop, Pig, AsterData, etc. I also got a few names of people that I had retweeted. In addition I got some stop words (interesting, bit, etc). I removed some of the stop words, and filtered out the names, and the resulting list was fairly decent. 
+
+I then iterated over ever tweet in the twitter stream, and computed the cosine similarity between the tweet, and my feed. This failed miserably. The top tweets for me were one word tweets such as &quot;PIg___&quot;, &quot;data&quot;, etc. Unsurprisingly, cosine similarity just doesn't hold up well for small documents, such as tweets. 
+
+This is as far as I've gotten, since I had to head back into work, but I have a few more tricks to try. Ideas are always welcome.
+</description>
+				<pubDate>Tue, 19 Jan 2010 00:00:00 -0800</pubDate>
+				<link>/archive/posts.old/posts/social/2010/01/19/exploring-twitter-stream.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/social/2010/01/19/exploring-twitter-stream.textile</guid>
+			</item>
+		
+			<item>
+				<title>Google App Engine and Facebook Connect</title>
+				<description>If you want to jump straight to the source code, download &quot;google_app_engine_facebook_connect_python.zip&quot;:/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip. 
+
+h5. SETUP GOOGLE
+
+To get started, you need to make sure you have signed up for Google App Engine, downloaded the SDK, and added an application to your account. The Google App Engine Launcher is a great way to develop for app engine. It's a convenient tool that allows you to test locally, and deploy to your app engine appspot quickly. For the purpose of our tutorial, we'll refer to the Facebook Connect app engine project as gae-facebook-connect. 
+
+h5. SETUP FACEBOOK
+
+After setting up your Google App Engine account, you'll need to create a &quot;Facebook Application&quot;:http://developers.facebook.com/setup.php. Don't worry too much about step 2 (the xd_receiver.html step), as I've included an xd_receiver.html file in the &quot;tutorial zip&quot;:/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip at the end of this tutorial. Once we're set up, we need to setup the Facebook Connect URL for our app engine. 
+
+!{width:100%}/img/app-engine-facebook-connect/facebook-connect.png!:/img/app-engine-facebook-connect/facebook-connect.png
+
+h5. INSTALL PYFACEBOOK
+
+Now that we have both Google App Engine and Facebook Connect setup, let's configure Facebook's Python library (appropriately named &quot;PyFacebook&quot;:http://wiki.developers.facebook.com/index.php/PyFacebook_Tutorial). In order to use PyFacebook with Google App Engine, you need to make a modification to the __init__.py file in PyFacebook's facebook directory. Add the following code to the Facebook class in __init__.py.
+
+&lt;script src=&quot;https://gist.github.com/3775967.js&quot;&gt; &lt;/script&gt;
+
+This trick is documented on the &quot;Facebook developer forums&quot;:http://forum.developers.facebook.com/viewtopic.php?pid=164613. For convenience, you can copy __init__.py into the root directory of your app engine project (where your main.py is), and call it facebook.py. This is not required, but it's the structure of the &quot;tutorial zip&quot;:/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip. 
+
+h5. WRITE APP
+
+Now that we've got the PyFacebook library configured properly, all that's left to do is write our Facebook Connect login app. First, make your app.yaml read like so.
+
+bc. application: gae-facebook-connect
+version: 1
+runtime: python
+api_version: 1
+
+bc. handlers:
+- url: /static
+  static_dir: static
+
+bc. - url: /.*
+  script: main.py
+
+The static directory is where any images, css, js, etc goes. In our case, this is where the xd_receiver.html will sit. The application value should be whatever your application is called on Google App Engine. 
+
+Next, we need to write main.py to.
+
+&lt;script src=&quot;https://gist.github.com/3775970.js&quot;&gt; &lt;/script&gt;
+
+There is a lot of boilerplate here, but the basic functionality is that MainHandler takes all requests to the root domain. The get() function is called, which is in the BaseHandler. The BaseHandler will check to see if the user is logged in. If the user is logged in, BaseHandler will call get_secure() in MainHandler, which will print the index.html template. If the user is not logged in, BaseHandler will print the login.html template. 
+
+Let's look at login.html.
+
+&lt;script src=&quot;https://gist.github.com/3775976.js&quot;&gt; &lt;/script&gt;
+
+And now index.html.
+
+&lt;script src=&quot;https://gist.github.com/3775978.js&quot;&gt; &lt;/script&gt;
+
+It should be fairly obvious what these two html files are doing. If you don't know what XFBML is, read here. 
+
+h5. CONCLUSION
+
+That's all! Just deploy your app, and you should be able to log in and out of your Facebook Connect Google App Engine app. 
+
+h5. LINKS
+
+&quot;google_app_engine_facebook_connect_python.zip&quot;:/files/app-engine-facebook-connect/google_app_engine_facebook_connect_python.zip
+&quot;Google App Engine&quot;:http://code.google.com/appengine/
+&quot;Facebook Developer Tools&quot;:http://developers.facebook.com/tools.php
+&quot;Facebook XFBML&quot;:http://wiki.developers.facebook.com/index.php/XFBML
+&quot;Facebook Application Setup&quot;:http://developers.facebook.com/setup.php
+&quot;PyFacebook&quot;:http://wiki.developers.facebook.com/index.php/PyFacebook_Tutorial
+&quot;PyFacebook App Engine Patch&quot;:http://forum.developers.facebook.com/viewtopic.php?pid=164613
+</description>
+				<pubDate>Thu, 26 Nov 2009 00:00:00 -0800</pubDate>
+				<link>/archive/posts.old/posts/python/2009/11/26/app-engine-facebook-connect.textile</link>
+				<guid isPermaLink="true">/archive/posts.old/posts/python/2009/11/26/app-engine-facebook-connect.textile</guid>
+			</item>
+		
+	</channel>
+</rss>

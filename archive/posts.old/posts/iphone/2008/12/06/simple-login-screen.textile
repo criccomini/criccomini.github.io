@@ -1,0 +1,164 @@
+h5. CREATE LOGINAPP
+
+!{float:right;width:10%}/img/simple-login-screen/20.png!:/img/simple-login-screen/20.png
+
+The first step of any project is to create it. To do this, do File > New Project. Once the "New Project" dialog box pops up, select Window-Based Application. Name your application "LoginApp".
+
+h5. CREATE UIVIEWCONTROLLER
+
+!{float:right;width:20%}/img/simple-login-screen/1.png!:/img/simple-login-screen/1.png
+
+!{float:right;width:20%}/img/simple-login-screen/2.png!:/img/simple-login-screen/2.png
+
+Now we need to create a view controller. View controllers take UI events and respond to them. Our view controller will take the "login" event when a user clicks on our login button. To create our view controller, right click on the "Classes" folder, and click Add > New File. Once the "New File" dialog pops up, select UIViewController subclass, and name it "LoginViewController".
+
+h5. ADD LOGIN EVENT
+
+The only event in our controller will be a login event. This event will be triggered when a user clicks on the "Login" button, which we have not yet creatd. Before we create the button, let's add the function that will handle our login event. To add the function, we need to alter the LoginViewController.h, and LoginViewController.m. 
+
+LoginViewController.h
+
+<script src="https://gist.github.com/3779255.js"> </script>
+
+LoginViewController.m
+
+<script src="https://gist.github.com/3779260.js"> </script>
+
+All we've done here is declared a function called "login". This is the function that will be called when the "Login" button is clicked.
+
+h5. CREATE LOGINVIEW
+
+!{float:right;width:20%}/img/simple-login-screen/4.png!:/img/simple-login-screen/4.png
+
+The next thing we need to do is add a LoginView.xib file. XIB files are XML files that define UI components. The LoginView.xib file that we make will be the only UI component in our project, other than the MainWindow.xib. 
+
+!{float:right;width:20%}/img/simple-login-screen/5.png!:/img/simple-login-screen/5.png
+
+To create the LoginView.xib file, right click on the "Resources" folder and click Add > New File. In the dialog box that pops up, select the "User Interfaces" category, and click on "View XIB". Finally, name the file "LoginView.xib".
+
+!{float:right;width:20%}/img/simple-login-screen/6.png!:/img/simple-login-screen/6.png
+
+h5. DEFINE FILE'S OWNER
+
+Once we've created our LoginView.xib, we need to start connecting it to our project. The first step for this is to define the LoginView's owner. To do this, double click on LoginView.xib in your resources folder. Doing so will open the Interface Builder (IB) application that comes with Xcode. The Interface Builder allows us to define UI components visually, rather than having to edit the .xib XML. 
+
+!{float:right;width:20%}/img/simple-login-screen/7.png!:/img/simple-login-screen/7.png
+
+Once the Interface Builder loads, you should see a few screens, including a blank white canvas, which is the LoginView. What we're interesting in right now is the box that has three icons in it, labeled "File's Owner", "First Responder", and "View". These are the components that make up your view. Right now, we're going to connect our LoginViewController to our LoginView. 
+
+!{float:right;width:20%}/img/simple-login-screen/8.png!:/img/simple-login-screen/8.png
+
+Select "File's Owner". You'll notice that one of the windows will react by changing the properties it displays. This is the "Inspector" window, and it is the window that we're interested in. We want to define LoginView.xib's owner as LoginViewController, so in the "Identity" tab of the Inspector, find the "Class" textbox, and enter "LoginViewController". The text box should automatically fill out as you type.
+
+h5. ADD UI ELEMENTS TO LOGINVIEW
+
+!{float:right;width:20%}/img/simple-login-screen/8.png!:/img/simple-login-screen/9.png
+
+Now that we've defined the controller for our LoginView, we need to add the UI elements to it. Our login screen will have a few components:
+
+# Username label
+# Username text field
+# Password label
+# Password text field
+# Login round rect button
+# Activity indicator
+
+!{float:right;width:10%}/img/simple-login-screen/10.png!:/img/simple-login-screen/10.png
+
+Drag these elements from the Library window into your LoginView canvas (the blank white screen). Make your screen look like the image to the right.
+
+h5. MAKE PASSWORD SECURE
+
+!{float:right;width:10%}/img/simple-login-screen/11.png!:/img/simple-login-screen/11.png
+
+Now we need to make our password box show asterisks instead of regular text. To do this, click on the password text field, and then look at the Inspector. In the "attributes" section, find the "secure" checkbox, and make sure that it is checked.
+
+h5. MAKE ACTIVITY INDICATOR HIDDEN
+
+!{float:right;width:10%}/img/simple-login-screen/12.png!:/img/simple-login-screen/12.png
+
+We want to hide the activity indicator now, so that we can show it when the user clicks on the "Login" button. To do this, click on the activity indicator in your canvas, and then go to the Inspector. Find the "hidden" checkbox, and make sure that it's checked.
+
+h5. LINK LOGIN BUTTON TO FILE'S OWNER
+
+!{float:right;width:20%}/img/simple-login-screen/13.png!:/img/simple-login-screen/13.png
+
+Once we've configured the UI, we need to link the login button to the file's owner. Recall that the file's owner is the LoginViewController, which we added a "login" function to. We can now link the login button to this function. 
+
+!{float:right;width:20%}/img/simple-login-screen/14.png!:/img/simple-login-screen/14.png
+
+To do so, click on the login button, and look at the inspector's connections tab. In the "events" section, click on the plus sign next to the "touch down" field, and DRAG it to the file's owner icon. When you release your mouse botton, a menu popup with the entry "login", which you need to select. This is telling the touch down event to call our login function when it's tapped. 
+
+If you recall, when we added the code to our LoginViewController, we included (IBAction) next to the declaration. This is what enables our function to show up as an action in the File's Owner box.
+
+h5. DECLARE LOGINVIEWCONTROLLER IN DELEGATE
+
+After linking up our login button, we need to actually add our view controller to the main application delegate. This is what actually makes our view visible when the application starts. 
+
+To do this, we need to update LoginAppAppDelegate.h, and LoginAppAppDelegate.m. Make your files look like the ones below. 
+
+LoginAppAppDelegate.h
+
+<script src="https://gist.github.com/3779265.js"> </script>
+
+LoginAppAppDelegate.m
+
+<script src="https://gist.github.com/3779268.js"> </script>
+
+h5. ADD UI ELEMENTS TO LOGINVIEWCONTROLLER
+
+Now that we've added our view has been added to the application delegate, we need to declare our UI elements in our LoginViewController. By declaring the elements in the controller, we will be able to get access to them programatically. This is useful for doing things like disabling the login button, activating the activity indicator, and getting the username and password text. 
+
+To declare the elements, you need to edit LoginViewController.h, and LoginViewController.m. Make your files look like the ones below. 
+
+LoginViewController.h
+
+<script src="https://gist.github.com/3779272.js"> </script>
+
+LoginViewController.m
+
+<script src="https://gist.github.com/3779273.js"> </script>
+
+Of specific importance here is the IBOutlet keyword in the header file. This allows us to see these variables from the interface builder. Outlet means that we can tie UI elements to the variables. 
+
+Also, notice the new code in the login function. This code will do two things. When the login button is clicked, it will disable it (since you don't want the user pressing the login button multiple times while we're authenticating), and it will also show the login activity indicator, and start spinning it. 
+
+The TODO item is where you would put the actual code that authenticates your user. This could be an HTTP call to a web service, or disk based authentication, or any other login scheme that you like.
+
+h5. CONNECT FILE'S OWNER TO LOGINVIEW
+
+!{float:right;width:20%}/img/simple-login-screen/15.png!:/img/simple-login-screen/15.png
+
+We're almost done! Before we connect all of the UI elements to their variables in the Interface Builder, we need to connect our LoginView to our LoginViewController. To do this, select the File's Owner in the Interface Builder, and go to the "Connections" tab in the Inspector. Find the "view" field in the "outlets" tab, and drag the plus sign to the "View" icon next to File's Owner.
+
+h5. CONNECT UI ELEMENTS
+
+!{float:right;width:20%}/img/simple-login-screen/16.png!:/img/simple-login-screen/16.png
+
+!{float:right;width:10%}/img/simple-login-screen/17.png!:/img/simple-login-screen/17.png
+
+Let's connect all of the UI elements in the Interface Builder. We have declared all of the UI elements in the LoginViewController. Now we can complete the connection in IB. To do this, drag select on File's Owner, and go to the Connections tab in the Inspector. You will see a list of outlets, which are the variables listed with IBOutlet in your LoginViewController.h. Drag the plus sign for each outlet to its corresponding UI element on the canvas. When finished, your outlets section should look like the image to the right.
+
+h5. CONCLUSION
+
+!{float:right;width:10%}/img/simple-login-screen/21.png!:/img/simple-login-screen/21.png
+
+!{float:right;width:10%}/img/simple-login-screen/20.png!:/img/simple-login-screen/20.png
+
+!{float:right;width:10%}/img/simple-login-screen/19.png!:/img/simple-login-screen/19.png
+
+!{float:right;width:10%}/img/simple-login-screen/18.png!:/img/simple-login-screen/18.png
+
+We're finished! To run the project, go back to Xcode, and click on the "Build and Go" button at the top of the window. The iPhone simulator will pop up after a few seconds, and your app will launch automatically. Once it launches, click on the username and password text fields, and fill them out with any text you like. Click on Login, and watch the activity indicator appear, and begin to spin. 
+
+You're now ready to hook the view up to a real authentication system, and use it as the login screen for your application! 
+
+h5. FILES
+
+"LoginApp.zip":/files/simple-login-screen/LoginApp.zip
+
+h5. LINKS
+
+"Setting *** for password text field + handle clicked button":http://www.iphonedevsdk.com/forum/iphone-sdk-development/5491-setting-password-text-field-handle-clicked-button.html
+"iPhone SDK iCalculator app":https://dnn4.datasprings.com/Resources/ArticlesInformation/iPhoneSDKGettingStartedExampleCode/tabid/911/language/en-US/Default.aspx
+"iPhone Noob":http://iphone.zcentric.com/2008/08/28/using-a-uiimagepickercontroller/
