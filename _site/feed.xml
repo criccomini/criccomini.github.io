@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title></title>
+    <description>Musings of a Software Engineer in Silicon Valley</description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Mon, 22 Oct 2018 22:17:50 -0700</pubDate>
+    <lastBuildDate>Mon, 22 Oct 2018 22:17:50 -0700</lastBuildDate>
+    <generator>Jekyll v3.8.4</generator>
+    
+      <item>
+        <title>Your First Technical Presentation</title>
+        <description>&lt;p&gt;Congratulations! You’ve been picked you to give a technical presentation. People are interested in what you have to say, and you’re excited and nervous. What now?&lt;/p&gt;
+
+&lt;p&gt;When you’re first starting out as an engineer, giving a presentation can be a bit daunting. Even for experienced developers (or anyone, for that matter), the idea of getting up in front of a room full of people can be pretty scary. In fact, &lt;a href=&quot;https://www.doitbest.com/pages/americas-most-common-fears&quot;&gt;public speaking is the most common phobia in America&lt;/a&gt;. So, what can you do to make sure things go smoothly? Here are a few tips that I’ve picked up over the years.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-story&quot;&gt;The story&lt;/h2&gt;
+
+&lt;p&gt;You’re obviously going to need to figure out what you want to say, and how you want to say it. All presentations involve telling a story. A good starting point to drive the story is to begin with the audience.&lt;/p&gt;
+
+&lt;p&gt;Pretend you’re talking to an audience member one-on-one, casually. What might you say to them? You probably need to give them some back story and context around the area you’re discussing. Then you get to the meat of it. You tell them the problem you’re trying to solve. You tell them about the actual technical changes that occurred, how they work, why you made them, and so on. Finally, they’re going to want to know whether it worked, and you’re going to want to share with them what you learned along the way, what you’d have done differently, and what your plans are for the future.&lt;/p&gt;
+
+&lt;p&gt;The structure need not conform to the example above, but starting by thinking through a casual one-on-one conversation with an audience member is a really great way to tease out the basic structure of your presentation.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-play-in-threeacts&quot;&gt;A play in three acts&lt;/h3&gt;
+
+&lt;p&gt;You might be familiar with a story structure called the &lt;a href=&quot;https://en.wikipedia.org/wiki/Three-act_structure&quot;&gt;three-act structure&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The three-act structure is a model used in narrative fiction that divides a story into three parts (acts), often called the Setup, the Confrontation and the Resolution.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;figure&gt;
+  &lt;img src=&quot;/assets/images/2018-10-23-your-first-technical-presentation/1024px-Tension_of_three_act_structure.png&quot; alt=&quot;my alt text&quot; /&gt;
+  &lt;figcaption&gt;Image attribution: &lt;a href=&quot;https://commons.wikimedia.org/wiki/File:Tension_of_three_act_structure.png&quot;&gt;UfofVincent/Wikimedia&lt;/a&gt;.&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;The example I provided above loosely follows this structure. Start with the setup. Describe the surrounding ecosystem. Whatever it is that the audience needs to know. Then, hit them with the problem. Now, confront the problem. Describe your attempt(s) to fix it. Lastly, you give them the resolution. The outcome, learnings, future work, etc.&lt;/p&gt;
+
+&lt;p&gt;This style works for a lot more than just “I made this change” kind of presentations. It can be adapted for technical proposals that have yet to be implemented, as well. It can even be used for informational presentations about how a technology works. You’ll find that most presentations can fit into this narrative form.&lt;/p&gt;
+
+&lt;h3 id=&quot;structure&quot;&gt;Structure&lt;/h3&gt;
+
+&lt;p&gt;The following is an example structure that I’ve used when giving a presentation about some technical improvement that’s been made.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Title slide&lt;/li&gt;
+  &lt;li&gt;Who am I?&lt;/li&gt;
+  &lt;li&gt;Table of contents&lt;/li&gt;
+  &lt;li&gt;Thing we wanted to do&lt;/li&gt;
+  &lt;li&gt;How we did it&lt;/li&gt;
+  &lt;li&gt;Problem with the way we did it&lt;/li&gt;
+  &lt;li&gt;How we do it now&lt;/li&gt;
+  &lt;li&gt;Results of change (improvements, performance, learnings, etc)&lt;/li&gt;
+  &lt;li&gt;Future work&lt;/li&gt;
+  &lt;li&gt;Questions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;the-deck&quot;&gt;The deck&lt;/h2&gt;
+
+&lt;p&gt;Now that you have your story, I’m guessing you’re going to want a slide deck to go with it. I’m going to skip the discussion about whether a deck is required or not. If you don’t need or want one, move on to the next section. Here’s some inspiration.&lt;/p&gt;
+
+&lt;h3 id=&quot;format&quot;&gt;Format&lt;/h3&gt;
+
+&lt;p&gt;Decide on the format of the slide deck. Four common formats are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Bullet point&lt;/li&gt;
+  &lt;li&gt;Sentence slides (&lt;a href=&quot;https://www.slideshare.net/ZazzaNM/sxsw-2018-top-trends&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Diagrams (&lt;a href=&quot;https://www.slideshare.net/dave.m/thingmonk-data-gravity-iot-and-time-series&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Charts (&lt;a href=&quot;https://www.kleinerperkins.com/perspectives/internet-trends-report-2018&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All can be fine. Pick one based on content, taste, and comfort. They’re not mutually exclusive, either. You can intermingle different formats in a single deck.&lt;/p&gt;
+
+&lt;h3 id=&quot;look-feel&quot;&gt;Look &amp;amp; feel&lt;/h3&gt;
+
+&lt;p&gt;You’ll also need to decide on a template. Aside from your standard company template, these are some common styles:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Photos (&lt;a href=&quot;https://www.slideshare.net/ZazzaNM/sxsw-2018-top-trends&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Paper (&lt;a href=&quot;https://speakerdeck.com/ept/is-kafka-a-database&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Minimalist (&lt;a href=&quot;https://www.slideshare.net/criccomini/samza&quot;&gt;example&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;other-rules&quot;&gt;Other rules&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Don’t put too much on one slide&lt;/li&gt;
+  &lt;li&gt;Don’t read off your slides&lt;/li&gt;
+  &lt;li&gt;If you put code on a slide, make it big and bold, and keep it short&lt;/li&gt;
+  &lt;li&gt;Avoid live demos&lt;/li&gt;
+  &lt;li&gt;If a question is taking too long to answer, say you want to take it offline&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;tips-andtricks&quot;&gt;Tips and tricks&lt;/h2&gt;
+
+&lt;h3 id=&quot;modularity&quot;&gt;Modularity&lt;/h3&gt;
+
+&lt;p&gt;If you’re going to be re-using your slides, consider using modular sections. With this approach, you break your presentation down into more distinct sub-sections. You might have 3–6 of these subsections, which you can then mix, match, and tweak based on the audience. Here’s a  &lt;a href=&quot;https://www.slideshare.net/criccomini/samza-qcon&quot;&gt;QCon talk I gave&lt;/a&gt; in 2014 that has multiple modular sub-sections (stream processing, motivation, Samza architecture, YARN, stateful processing). I re-used this talk a number of times, but trimmed or completely dropped some sections depending on the audience.&lt;/p&gt;
+
+&lt;h3 id=&quot;additive-slides&quot;&gt;Additive slides&lt;/h3&gt;
+
+&lt;p&gt;Another trick you can use if you’re trying to explain something complex is to take an additive approach to the slides. You start with a blank or nearly empty slide, then as you narrate, you add more and more to the slide. You can see an example of this at the 25 minute mark, &lt;a href=&quot;https://www.infoq.com/presentations/samza-linkedin&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;buddy-up&quot;&gt;Buddy up&lt;/h3&gt;
+
+&lt;p&gt;If you’re feeling particularly nervous, sometimes it’s nice to have someone to share the stage with. Find a friend or co-worker that’s willing to help, and enlist them to split the presentation with you.&lt;/p&gt;
+
+&lt;h2 id=&quot;preparing&quot;&gt;Preparing&lt;/h2&gt;
+
+&lt;p&gt;Now that you’ve got your story and your deck, you need to practice. The best thing you can do is set up a dry run with your team.&lt;/p&gt;
+
+&lt;h3 id=&quot;dry-runs&quot;&gt;Dry runs&lt;/h3&gt;
+
+&lt;p&gt;Do at least one dry run before your presentation. Treat it like a real presentation. Do the full presentation as closely as possible to how you plan to deliver it when you are presenting. Follow these steps:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Get a room&lt;/li&gt;
+  &lt;li&gt;Invite your team&lt;/li&gt;
+  &lt;li&gt;Make your team take notes for feedback (ideally, with slide numbers)&lt;/li&gt;
+  &lt;li&gt;Time the presentation&lt;/li&gt;
+  &lt;li&gt;After the presentation, the team provides feedback&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This will feel awkward at first. Power through the first few minutes, and trust me, it’ll be worth it.
+After the dry run, you get feedback, and update the presentation accordingly. If there were large changes, you’ll probably want to do a second dry run. Keep iterating until you’re happy with your presentation.&lt;/p&gt;
+
+&lt;h2 id=&quot;thats-allfolks&quot;&gt;That’s all folks&lt;/h2&gt;
+
+&lt;p&gt;Now you’ve figured out the story you want to tell, built a slide deck to tell it, and done a few dry runs. The next step is do give the actual presentation! I’m not going to go in-depth on that. There are a lot of resources online, and if you want to brush up on your presenting skills, a popular resource is &lt;a href=&quot;https://www.toastmasters.org&quot;&gt;Toastmasters&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 23 Oct 2018 00:00:00 -0700</pubDate>
+        <link>http://localhost:4000/your-first-technical-presentation</link>
+        <guid isPermaLink="true">http://localhost:4000/your-first-technical-presentation</guid>
+        
+        
+        <category>Presentations</category>
+        
+      </item>
+    
+  </channel>
+</rss>

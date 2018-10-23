@@ -1,0 +1,45 @@
+# Site
+name: "Chris Riccomini"
+description: "Musings of a Software Engineer in Silicon Valley"
+meta_description: "Musings of a Software Engineer in Silicon Valley"
+logo: 'assets/images/logo.png'
+favicon: 'assets/images/logo.png'
+baseurl: 
+google_analytics: 'UA-6509613-1'
+permalink: /:title
+#disqus: 'demowebsite'
+#mailchimp-list: 'https://riccomini.us19.list-manage.com/subscribe/post?u=5c418e7c625e2ad8641a6acff&amp;id=683961621e'
+
+
+# Authors
+authors:
+  chris:
+    name: Chris Riccomini
+    display_name: Chris
+    gravatar: a64711be26200495304a30de2b3fcac2
+    email: criccomini@gmail.com
+    web: https://riccomini.name
+    twitter: https://twitter.com/criccomini
+    twitter_name: criccomini
+    description: "Software engineer. WePay, LinkedIn, PayPal. Co-author Apache Samza, PMC Apache Airflow."
+
+# Plugins
+plugins: 
+  - jekyll-paginate
+  - jekyll-archives
+    
+# Archives
+jekyll-archives:
+  enabled:
+    - categories
+  layout: archive
+  permalinks:
+    category: '/category/:name/'
+    
+# Pagination 
+paginate: 6
+paginate_path: /page:num/
+    
+# Other
+markdown: kramdown
+highlighter: rouge
