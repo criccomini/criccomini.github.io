@@ -8,7 +8,7 @@ baseurl:
 google_analytics: 'UA-6509613-1'
 permalink: /:title
 #disqus: 'demowebsite'
-#mailchimp-list: 'https://riccomini.us19.list-manage.com/subscribe/post?u=5c418e7c625e2ad8641a6acff&amp;id=683961621e'
+mailchimp-list: 'https://riccomini.us19.list-manage.com/subscribe/post?u=5c418e7c625e2ad8641a6acff&amp;id=683961621e'
 
 
 # Authors
