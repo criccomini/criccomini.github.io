@@ -2,7 +2,7 @@
 layout: post
 title:  "Your First Technical Presentation"
 author: chris
-categories: [ Presentations ]
+categories: [ presentations ]
 featured: true
 hidden: true
 image: assets/images/2018-10-23-your-first-technical-presentation/matthias-wagner-679540-unsplash.jpg
