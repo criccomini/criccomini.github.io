@@ -1,7 +1,7 @@
 # Site
 name: "Chris Riccomini"
-description: "Musings of a Software Engineer in Silicon Valley"
-meta_description: "Musings of a Software Engineer in Silicon Valley"
+description: "Thoughts on Software Engineering"
+meta_description: "Thoughts on Software Engineering"
 logo: 'assets/images/logo.png'
 favicon: 'assets/images/logo.png'
 baseurl: 
