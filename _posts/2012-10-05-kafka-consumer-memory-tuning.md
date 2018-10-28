@@ -8,8 +8,6 @@ redirect_from:
   - /posts/kafka/2012-10-05-kafka-consumer-memory-tuning/
 ---
 
-***WARNING: This is for the legacy Java Kafka consumer.***
-
 Yesterday, I had a process that was consuming a single Kafka topic. I was running it in our "staging" environment, and everything worked great. My heap space for the process was set to 512 megabytes (`-Xmx512M`). When I moved this process to production, my process would fail with an out of memory exception. I was seeing:
 
 ```
@@ -20,6 +18,8 @@ FetcherRunnable [ERROR] error in FetcherRunnable
 ```
 
 Let's review what happened, and how to fix it.
+
+***WARNING: This is for the legacy Java Kafka consumer.***
 
 ##  Buffers
 

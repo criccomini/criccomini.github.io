@@ -7,7 +7,7 @@ redirect_from:
   - /posts/game-time-baby/2012-09-29-streaming-live-sports-schedule-scores-stats-api/
 ---
 
-## What I needed
+Recently, I've been looking for an API that exposes schedules and scores for "the big four" American leagues. Here's what I was looking for:
 
 * Daily game schedules for MLB, NBA, NFL, and NHL (the big four).
 * Scores and times for MLB, NBA, NFL, and NHL. Can be delayed a minute or two.
