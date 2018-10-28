@@ -2,7 +2,7 @@
 layout: post
 title:  "Sorting Reducer Input Values in Hadoop"
 author: chris
-categories: [ distributed-systems ]
+categories: [ distributed-systems, hadoop ]
 image: assets/images/2009-11-13-sort-reducer-input-value-hadoop/hadoop-logo-png-transparent.png
 redirect_from:
   - /posts/hadoop/2009-11-13-sort-reducer-input-value-hadoop/
