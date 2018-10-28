@@ -27,6 +27,7 @@ authors:
 plugins: 
   - jekyll-paginate
   - jekyll-archives
+  - jekyll-redirect-from
     
 # Archives
 jekyll-archives:
