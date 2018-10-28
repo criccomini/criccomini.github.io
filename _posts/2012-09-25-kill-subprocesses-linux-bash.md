@@ -2,7 +2,7 @@
 layout: post
 title:  "Killing Subprocesses in Linux/Bash"
 author: chris
-categories: [ devops ]
+categories: [ devops, distributed-systems ]
 image: assets/images/2012-09-25-kill-subprocesses-linux-bash/jon-tyson-478928-unsplash.jpg
 redirect_from:
   - /posts/linux/2012-09-25-kill-subprocesses-linux-bash/
@@ -10,7 +10,7 @@ redirect_from:
 
 Lately, I've been working with [YARN](http://hadoop.apache.org/docs/r0.23.0/hadoop-yarn/hadoop-yarn-site/YARN.html) at LinkedIn. This framework allows you to execute Bash scripts on one or more machines. It's used primarily for Hadoop. When using YARN, you often end up with nested Bash scripts with no parent process ID (PPID) when the NodeManager launches the Bash script. This can be pretty problematic when the NodeManager is shut down, since you must make sure to clean up all child subprocesses via your parent Bash script.
 
-## Understanding Linux Subprocesses
+## Understanding Linux subprocesses
 
 Let's start with an example. We'll have two shell scripts: a parent, and a child:
 
@@ -43,7 +43,7 @@ ubuntu   10968 10967  0 05:14 pts/1    00:00:00 sleep 1000
 
 Notice that the PPID of parent.sh is now 1. This is essentially a top-level process that has no parent.
 
-## Unexpected Behavior
+## Unexpected behavior
 
 In both of these examples, it seems intuitive that killing the top level parent would result in all of the children being cleaned up. There are a [number of ways to kill a process](http://en.wikipedia.org/wiki/Kill_(command)), so let's start with:
 
@@ -122,11 +122,11 @@ $ ps -ef | grep sleep
 
 And you will see that sleep is no longer running!
 
-## Top-Level Trap
+## Top-level trap
 
 A variation of having a trap in each Bash file is to have a single top-level trap that uses 'ps' to find children:
 
-```
+```bash
 kill_child_processes() {
     isTopmost=$1
     curPid=$2
@@ -151,7 +151,7 @@ This is a less than ideal solution, but it does work. For details, see [this pag
 Running traps everywhere can be kind of clunky, and error prone. A cleaner approach is to use the kill command, and provide a parent process ID (PPID) instead of a process ID. To do this, the syntax gets funky. You use a negative of the parent process ID, like so:
 
 ```
-kill -- -<PPID>
+$ kill -- -<PPID>
 ```
 
 For example, with this process tree:
@@ -166,8 +166,8 @@ ubuntu   11098 11097  0 05:36 ?        00:00:00 sleep 1000
 You would run:
 
 ```
-kill -- -11096
-ps -ef | grep sleep
+$ kill -- -11096
+$ ps -ef | grep sleep
 ```
 
 As you can see, killing with a PPID automatically cleans all subprocesses, including nested subprocesses!
