@@ -28,7 +28,7 @@ Let's start by reviewing the continuous delivery process for a microservice.
 * Deploy to production
 * Measure and validate
 
-This looks very similar to what you're doing with your models. Let's dig into each step in the lifecycle.
+This looks very similar to what you're doing with your models.
 
 ### Version control
 
@@ -71,7 +71,7 @@ Again, the same pattern holds for models. The prediction success rate of the mod
 
 I'm not entirely sure why we ended up here. Two potential explanations are:
 
-* The jump from data science to data engineering to DevOps is makes it difficult for teams building data infrastructure to recognize the commonalities with the microservice environment at their organization (c.f. [Conway's law](https://en.wikipedia.org/wiki/Conway's_law)).
+* The jump from data science to data engineering to DevOps makes it difficult for teams building data infrastructure to recognize the commonalities with the microservice environment at their organization (c.f. [Conway's law](https://en.wikipedia.org/wiki/Conway's_law)).
 * Microservice tooling isn't flexible enough. For example, CI systems tend to model build steps as linear or parallelizable. Model building usually involves much more complex DAGs where tasks have dependencies on one another.
 
 ## Same process or same stack
@@ -82,7 +82,7 @@ The logical place to start is probably the deployment manager itself. The system
 
 Artifact repositories and version control are other places that seem to be likely targets for integration. If you're building models as pickled objects, tarballs, or Docker images, sticking them in a standard artifact repository is quite doable. Storing the models in version control is also obvious.
 
-Measurement and validation also seem to be likely candidates. Placing model performance in your operational charts and graphs is something that should be done anyway, and adding alerting on top of it again seems like an obvious choice.
+Measurement and validation also seem to be likely candidates. Placing model performance in your operational charts and graphs is something that should be done anyway, and adding alerting on top of it shouldn't be controversial.
 
 When you add all of this up, it paints a compelling argument for a shared stack. Yes, build and testing probably need to be done on separate systems, but versioning, deployment, measurement and validation all fit nicely with existing devops infrastructure.
 
@@ -92,6 +92,6 @@ I admit that it's not all roses. I've already mentioned the differences in the b
 
 ## The future
 
-There are signs of hope in the devops and machine learning spaces. GitLab's site has an interesting issue entitled [GitLab/Devops for AI/ML](https://gitlab.com/gitlab-org/gitlab-ce/issues/46161). Gitlab does a fantastic job modeling continuous integration and delivery, and I'd be excited to progress in this area. There are [a lot](https://towardsdatascience.com/deploying-machine-learning-models-with-docker-5d22a4dacb5) of [posts](https://www.udemy.com/deploy-data-science-nlp-models-with-docker-containers/) about [deploying models](http://shop.oreilly.com/product/0636920084334.do) through [Docker](https://medium.com/analytics-vidhya/how-to-deploy-machine-learning-models-using-flask-docker-and-google-cloud-platform-gcp-6e7bf1b339d5), [version control in JupyterHub](https://towardsdatascience.com/version-control-for-jupyter-notebook-3e6cef13392d), and so on. I'm also pretty excited about how [Prefect](https://www.prefect.io/) is [thinking about model deployment](https://medium.com/the-prefect-blog/positive-and-negative-data-engineering-a02cb497583d).
+There are signs of hope in the devops and machine learning spaces. GitLab's site has an interesting issue entitled [GitLab/Devops for AI/ML](https://gitlab.com/gitlab-org/gitlab-ce/issues/46161). Gitlab does a fantastic job modeling continuous integration and delivery, and I'd be excited to progress in this area. There are [a lot](https://towardsdatascience.com/deploying-machine-learning-models-with-docker-5d22a4dacb5) of [posts](https://www.udemy.com/deploy-data-science-nlp-models-with-docker-containers/) about [deploying models](http://shop.oreilly.com/product/0636920084334.do) through [Docker](https://medium.com/analytics-vidhya/how-to-deploy-machine-learning-models-using-flask-docker-and-google-cloud-platform-gcp-6e7bf1b339d5), [version control in JupyterHub](https://towardsdatascience.com/version-control-for-jupyter-notebook-3e6cef13392d), and so on. I'm also pretty excited about how [Prefect](https://www.prefect.io/) is [thinking about problems like this](https://medium.com/the-prefect-blog/positive-and-negative-data-engineering-a02cb497583d).
 
 In the meantime, the best path forward is probably to be opportunistic about shared infrastructure. If you find yourself deploying pre-built models, ask why they can't be deployed via the same repository as your microservices. Likewise, when measuring the performance of a model in production, why not see how easy it'd be to use your existing metrics and monitoring infrastructure?
