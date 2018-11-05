@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  "Change data capture with Kafka breaks database encapsulation"
+title:  "Kafka change data capture breaks database encapsulation"
 author: chris
 categories: [ kafka, distributed-systems ]
 featured: true
 hidden: true
-image: assets/images/2018-11-05-change-data-capture-kafka-breaks-database-encapsulation/bjorn-kamfjord-379952-unsplash.jpg
+image: assets/images/2018-11-05-kafka-change-data-capture-breaks-database-encapsulation/bjorn-kamfjord-379952-unsplash.jpg
 ---
 
 Realtime [change data capture](https://en.wikipedia.org/wiki/Change_data_capture) (CDC) is becoming a popular architecture for [data integration](https://en.wikipedia.org/wiki/Data_integration) and [data pipelines](https://en.wikipedia.org/wiki/Pipeline_(computing)). The rise of [Kafka connect](https://docs.confluent.io/current/connect/index.html), in particular, has triggered a lot of interest in the subject. In realtime CDC, a database's changes (inserts, updates, and deletes) are available as a stream of mutations for downstream consumers to tail.
@@ -54,7 +54,7 @@ A similar solution can be implemented by transforming data in the CDC pipeline. 
 
 An example data warehousing pipeline follows.
 
-![source db, kafka, destination db](assets/images/2018-11-05-change-data-capture-kafka-breaks-database-encapsulation/example-data-warehousing.png "CDC example: data warehousing")
+![source db, kafka, destination db](assets/images/2018-11-05-kafka-change-data-capture-breaks-database-encapsulation/example-data-warehousing.png "CDC example: data warehousing")
 
 A mutation in a source DB is consumed by a Kafka source connector. It's then emitted to Kafka as a fully schema'd Avro message. A Kafka sink connector then consumes the message and inserts it into the destination data warehouse DB. Transformations can be placed at any point in this flow.
 
