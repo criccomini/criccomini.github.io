@@ -2,7 +2,7 @@
 layout: post
 title:  "Kafka Consumer Memory Tuning"
 author: chris
-categories: [ distributed-system, kafka ]
+categories: [ distributed-systems, kafka ]
 image: assets/images/2012-10-05-kafka-consumer-memory-tuning/rawpixel-741689-unsplash.jpg
 redirect_from:
   - /posts/kafka/2012-10-05-kafka-consumer-memory-tuning/
