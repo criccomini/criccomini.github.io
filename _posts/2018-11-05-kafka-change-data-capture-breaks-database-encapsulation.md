@@ -8,7 +8,13 @@ hidden: true
 image: assets/images/2018-11-05-kafka-change-data-capture-breaks-database-encapsulation/bjorn-kamfjord-379952-unsplash.jpg
 ---
 
-Realtime [change data capture](https://en.wikipedia.org/wiki/Change_data_capture) (CDC) is becoming a popular architecture for [data integration](https://en.wikipedia.org/wiki/Data_integration) and [data pipelines](https://en.wikipedia.org/wiki/Pipeline_(computing)). The rise of [Kafka connect](https://docs.confluent.io/current/connect/index.html), in particular, has triggered a lot of interest in the subject. In realtime CDC, a database's changes (inserts, updates, and deletes) are available as a stream of mutations for downstream consumers to tail.
+Realtime [change data capture](https://en.wikipedia.org/wiki/Change_data_capture) (CDC) is becoming a popular architecture for [data integration](https://en.wikipedia.org/wiki/Data_integration) and [data pipelines](https://en.wikipedia.org/wiki/Pipeline_(computing)). The rise of [Kafka connect](https://docs.confluent.io/current/connect/index.html), in particular, has triggered a lot of interest in the subject. In realtime CDC, a database's changes (inserts, updates, and deletes) are available as a stream of mutations for downstream consumers to tail. This architecture is showing up a lot in modern ETL and data integration implementations, and it has a number of advantages:
+
+* **It’s lower latency.** Unlike periodic pulls, which can range from minutes to days between loads, CDC typically has a latency on the order of seconds.
+* **You get intermediate data.** CDC also usually exposes all intermediate mutations as well. If you have an insert, update, and delete, and batch loads execute only before the update and after the delete, you’ll never see the data in the downstream system at all. CDC can expose all three operations to downstream consumers.
+* **You can run stream processing on the feed.** CDC systems also open the door up to running stream processing on database changes. You can do realtime aggregation, monitoring, and more.
+
+There are a bunch of other advantages, as well. Suffice it to say, realtime DB change data capture is a really great way to do data integration in your organization.
 
 ## Schema evolution
 
