@@ -18,6 +18,8 @@ Pretend you're talking to an audience member one-on-one, casually. What might yo
 
 The structure need not conform to the example above, but starting by thinking through a casual one-on-one conversation with an audience member is a really great way to tease out the basic structure of your presentation.
 
+{% include newsletter.html %}
+
 ### A play in three acts
 
 You might be familiar with a story structure called the [three-act structure](https://en.wikipedia.org/wiki/Three-act_structure).

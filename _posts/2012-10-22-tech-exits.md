@@ -33,6 +33,8 @@ It's also worth level setting expectations for potential income from the shares 
 
 I highly recommend [this Quora post](http://www.quora.com/Startups/When-joining-a-small-startup-15-people-what-are-some-appropriate-questions-to-ask-to-help-determine-the-value-of-your-equity-and-the-potential-of-the-company) and [this Wealthfront post](https://blog.wealthfront.com/startup-employee-equity-compensation/) for further reading.
 
+{% include newsletter.html %}
+
 ## Acquisitions
 
 Acquisitions are a hot way to cash out in the valley, these days. Companies like Facebook are [acquihiring](http://www.washingtonpost.com/national/on-leadership/for-tech-companies-like-facebook-and-google-acqui-hiring-present-latest-management-challenge/2012/10/11/9b4a9744-13ab-11e2-be82-c3411b7680a9_story.html) failing startups right and left, and a lot of larger companies are flush with cash after IPO'ing and building up their talent pool.

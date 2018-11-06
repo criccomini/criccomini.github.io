@@ -34,6 +34,8 @@ List<KafkaStream<Message>> streams = topicMessageStreams.get("test");
 
 Internally, Kafka creates a buffer for each thread attached to the ConsumerConnector. In this case, there are four threads, and therefore four buffers. These buffers, which are queues, are populated asynchronously until they are "full". When your code reads from a stream, Kafka dequeues from the stream/thread's queue, and gives you a message. 
 
+{% include newsletter.html %}
+
 ##  Tuning memory usage
 
 Two important questions arise from this:

@@ -16,6 +16,8 @@ Something that caught my eye, though, is that the deployment pipeline for their 
 
 This is an interesting peculiarity. I can't recall ever seeing a unified model and service deployment stack. Yet, in the abstract, the deployment needs for models and services are strikingly similar.
 
+{% include newsletter.html %}
+
 ## Continuous deployment for models
 
 Let's start by reviewing the continuous delivery process for a microservice.

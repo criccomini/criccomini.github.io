@@ -43,6 +43,8 @@ ubuntu   10968 10967  0 05:14 pts/1    00:00:00 sleep 1000
 
 Notice that the PPID of parent.sh is now 1. This is essentially a top-level process that has no parent.
 
+{% include newsletter.html %}
+
 ## Unexpected behavior
 
 In both of these examples, it seems intuitive that killing the top level parent would result in all of the children being cleaned up. There are a [number of ways to kill a process](http://en.wikipedia.org/wiki/Kill_(command)), so let's start with:

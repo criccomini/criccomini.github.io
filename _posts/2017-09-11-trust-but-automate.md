@@ -16,6 +16,8 @@ People aren’t perfect. Rules are circumvented, mistakenly or otherwise. You ne
 
 The solution is to seek out what can be automated, and spend the time to automate it. Ultimately, it’s the responsibility of the person (or group) that defined the rules to make sure that the rules are enforced. This means it’s their job to automate the enforcement, whether that’s writing scripts, turning on commit hooks, or enabling lint checks.
 
+{% include newsletter.html %}
+
 ## What about exceptions?
 
 The problem with rules is that there are always exceptions. When the rubber meets the road, when it’s 3 a.m. and the site is down and you just need to get something fixed. You need to *consciously* and *intentionally* circumvent the rules. But you’ve just gone and automated everything! You need to bake the exception flow into the automation process.

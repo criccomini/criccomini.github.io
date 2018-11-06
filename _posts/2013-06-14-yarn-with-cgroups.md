@@ -29,6 +29,8 @@ The two best places to get a high level view of Cgroups are:
 
 Currently (as of 2.0.5-alpha), YARN only supports Cgroups CPU isolation (using a property called cpu.shares, which I'll get into later). There are future plans to add more features to the CPU isolation (in 2.1.0-beta; [YARN-610](https://issues.apache.org/jira/browse/YARN-600), [YARN-799](https://issues.apache.org/jira/browse/YARN-799), [YARN-810](https://issues.apache.org/jira/browse/YARN-810)), and also support other resources, such as disk, and network.
 
+{% include newsletter.html %}
+
 ## Setting up Cgroups
 
 Cgroups is fairly OS-specific, so you'll need to do research into whether your particular OS and Kernel have Cgroups setup and installed. For this tutorial, I used RHEL 6 with the following kernel:

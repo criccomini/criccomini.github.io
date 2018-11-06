@@ -38,6 +38,8 @@ This is actually somewhat difficult to do, since we want to partition by key, bu
 
 We can then use a custom partitioner/sorter to partition and sort according to our needs. 
 
+{% include newsletter.html %}
+
 ## Sorting by value
 
 To sort Hadoop's mapper output by value, you need to set three settings in your JobConf:

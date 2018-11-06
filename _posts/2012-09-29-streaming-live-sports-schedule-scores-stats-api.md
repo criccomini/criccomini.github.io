@@ -21,6 +21,8 @@ After some research, I was able to get the data I needed for free via either of 
 
 I encourage you not to abuse the free APIs by polling them too frequently.
 
+{% include newsletter.html %}
+
 ## ESPN (free)
 
 As I said, when I first started out, I was interested in a free solution. I found a few nice write-ups on how to get the scores from ESPN.

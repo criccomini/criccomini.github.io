@@ -16,6 +16,8 @@ Realtime [change data capture](https://en.wikipedia.org/wiki/Change_data_capture
 
 There are a bunch of other advantages, as well. Suffice it to say, realtime DB change data capture is a really great way to do data integration in your organization.
 
+{% include newsletter.html %}
+
 ## Schema evolution
 
 Problems begin to arise when schema evolution enters the picture. Developers are used to thinking of their databases as nicely encapsulated private data stores. If they want to evolve a schema, they should be able to. Typical use cases involve renaming a field, adding a new field, removing an old field, or changing data types. All of these can pose problems for the Kafka ecosystem. Removing required fields, for example, is a forwards incompatible change. Downstream consumers expect the field to be there. Similarly, changing a field from an integer to a string will also break downstream code that's expecting to get integers values.
