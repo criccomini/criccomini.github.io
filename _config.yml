@@ -28,6 +28,7 @@ plugins:
   - jekyll-paginate
   - jekyll-archives
   - jekyll-redirect-from
+  - jekyll-sitemap
     
 # Archives
 jekyll-archives:
