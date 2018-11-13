@@ -3,8 +3,6 @@ layout: post
 title:  "Models and microservices should be running on the same continuous delivery stack"
 author: chris
 categories: [ devops, machine-learning ]
-featured: true
-hidden: true
 image: assets/images/2018-10-29-models-microservices-should-be-using-same-continuous-delivery-stack/rawpixel-782053-unsplash.jpg
 ---
 
