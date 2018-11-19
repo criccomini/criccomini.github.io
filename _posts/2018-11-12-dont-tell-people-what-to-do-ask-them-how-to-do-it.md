@@ -10,6 +10,8 @@ image: assets/images/2018-11-12-dont-tell-people-what-to-do-ask-them-how-to-do-i
 
 When I first joined LinkedIn, there was very little automation in production deployments. Believe it or not, each deployment day had a wiki page with a run book of all the services that needed to be deployed, complete with configuration changes that needed to be executed. Roll outs happened on Thursday evenings, and the entire site was brought offline during the deployments. Metrics and monitoring weren't much better. We had very limited visibility into metrics and logs. Obviously, this caused a bunch of problems for the engineers. For one thing, it meant that we had to rely heavily on the operations staff anytime we needed to do just about anything.
 
+{% include newsletter.html %}
+
 Early on, and young in my career, I was tasked with shipping a new web service. This was my first real foray into production software development, and I was pretty clueless as to how to get my bits of code into production. Over the course of the project, I had to go frequently to the operations team (what we'd now call the SRE team) to ask them to do something for me. Every time I'd ask them to do something, they'd respond with a thinly veiled snipe that amounted to, "No, go away." I'd walk away thinking, "OK, now what? I need them to ship my software." Usually, it went something like this.
 
 > **Me**: Hey, can you please install nltk on this machine for me?  

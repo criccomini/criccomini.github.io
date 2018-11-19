@@ -3,8 +3,6 @@ layout: post
 title:  "Kafka change data capture breaks database encapsulation"
 author: chris
 categories: [ kafka, distributed-systems ]
-featured: true
-hidden: true
 image: assets/images/2018-11-05-kafka-change-data-capture-breaks-database-encapsulation/bjorn-kamfjord-379952-unsplash.jpg
 ---
 
