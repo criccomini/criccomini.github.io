@@ -3,8 +3,6 @@ layout: post
 title:  "Don't tell people what to do, ask them how to do it"
 author: chris
 categories: [ devops, engineering-field-manual ]
-featured: true
-hidden: true
 image: assets/images/2018-11-12-dont-tell-people-what-to-do-ask-them-how-to-do-it/kaleidico-754613-unsplash.jpg
 ---
 
