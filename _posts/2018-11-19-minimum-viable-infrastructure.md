@@ -3,8 +3,6 @@ layout: post
 title:  "Minimum viable infrastructure"
 author: chris
 categories: [ distributed-systems, engineering-field-manual ]
-featured: true
-hidden: true
 image: assets/images/2018-11-19-minimum-viable-infrastructure/nick-grant-705798-unsplash.jpg
 ---
 
