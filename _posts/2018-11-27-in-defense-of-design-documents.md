@@ -10,6 +10,8 @@ image: assets/images/2018-11-27-in-defense-of-design-documents/annie-spratt-7469
 
 Design documents aren't just a chore; something that you begrudgingly slog through before getting to the fun work of writing code. Writing a design document might be challenging, but it should be a productive exercise that gets everyone on the same page. Let's start with what a design document is.
 
+{% include newsletter.html %}
+
 Design documents come in all sorts of flavors. Some of them are tens or even hundreds of pages long, while others might be a few paragraphs. Some are very formal or academic, while others are quite casual. One important area of distinction is whether a design document is being written before the code has been implemented, or whether it's being written for an existing piece of software. Documents written before implementation tend to be more exploratory and persuasive, while documents written after tend to be more about description. This document focuses on design documents that have not yet been implemented, though a lot of the content here applies just as much to design documents for existing code.
 
 ## The document

@@ -8,6 +8,8 @@ image: assets/images/2017-08-29-how-paint-bike-shed-kafka-topic-naming-conventio
 
 Today, I'll be tackling the controversial subject of [Kafka](https://kafka.apache.org/) topic names. Not only will I review various schemes, but I've decided to take a stand on a few issues and outline my reasoning. Get out your brush, and let's [paint this bike shed](https://en.wiktionary.org/wiki/bikeshedding)!
 
+{% include newsletter.html %}
+
 There's surprisingly little guidance on the internet about Kafka topic naming conventions. A [few](https://stackoverflow.com/questions/40714764/what-should-be-naming-convention-of-topic-and-partition-of-kafka) [sparse](https://stackoverflow.com/questions/43726571/what-is-the-best-practice-for-naming-kafka-topics) Stack Overflow questions, and a [couple](http://grokbase.com/t/kafka/users/152r20xg4r/stream-naming-conventions) of [mailing list discussions](https://www.mail-archive.com/dev@samza.apache.org/msg00524.html) are all that pop up on the [first page of Google](https://www.google.com/search?q=kafka+topic+naming+convention). The opinions on the matter vary pretty widely. Some suggestions from the links above include:
 
 * `<root name space>.<product>.<product specific hierarchy>`

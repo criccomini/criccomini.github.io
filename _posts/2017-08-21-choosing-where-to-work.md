@@ -10,7 +10,7 @@ Making the right decision about where to work can have a profound effect on one�
 
 *(This is drawn from personal experience. It isn’t gospel. Critical thinking is encouraged.)*
 
--
+{% include newsletter.html %}
 
 Think of a job’s score as a [weighted average](https://en.wikipedia.org/wiki/Weighted_arithmetic_mean) of its various dimensions. The higher the score, the better the fit for the candidate. [1]
 
