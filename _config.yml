@@ -29,7 +29,8 @@ plugins:
   - jekyll-archives
   - jekyll-redirect-from
   - jekyll-sitemap
-    
+  - jekyll-feed
+
 # Archives
 jekyll-archives:
   enabled:
