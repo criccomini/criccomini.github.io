@@ -3,8 +3,6 @@ layout: post
 title:  "In defense of design documents"
 author: chris
 categories: [ engineering-field-manual ]
-featured: true
-hidden: true
 image: assets/images/2018-11-27-in-defense-of-design-documents/annie-spratt-746981-unsplash.jpg
 ---
 
