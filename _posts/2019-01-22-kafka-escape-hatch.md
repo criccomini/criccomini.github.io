@@ -10,6 +10,8 @@ image: assets/images/2019-01-22-kafka-escape-hatch/chris-barbalis-705864-unsplas
 
 I've become much more comfortable with the idea of vendor lock-in. Or rather, I don't feel as locked in as I used to. The odd thing is, I'm using more proprietary systems than I ever have before (thanks to the cloud). Apache Kafka is what's making me comfortable. Specifically, Kafka connect.
 
+{% include newsletter.html %}
+
 Historically, queuing and log data have flowed through Kafka, but primary data (often the most important stuff) has been more difficult to get into the system. Now that Kafka connect is gaining traction, and thanks to change data capture (CDC) connectors like Debezium, I'm starting to see glimpses of the promised future: all of an organization's data available in realtime to any piece of infrastructure that needs it. Once the data is in Kafka, it's so much more portable. This is a really big deal.
 
 But why care about data portability? Most data processing involves two things: compute and storage. In Hadoop, for example, the compute layer is Map/Reduce, and the storage layer is HDFS. With data processing, what you're interested in is the compute part. The storage is just along for the ride; an optimized layer to allow the computation to take place quickly. But almost every time you add a new technology to provide some new style of computation (graph traversal, time series, map/reduce, SQL, key-value, streaming, geographic, ML), you have to integrate a new storage layer first. Kafka and Kafka connect make this much, much easier.
