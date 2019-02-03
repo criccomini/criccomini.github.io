@@ -3,8 +3,6 @@ layout: post
 title:  "Research in cell, animal, and human software simulation can speed up experimentation"
 author: chris
 categories: [ machine-learning ]
-featured: true
-hidden: true
 image: assets/images/2019-01-15-research-cell-animal-human-software-simulation-speed-up-experimentation/louis-reed-747388-unsplash.jpg
 ---
 
