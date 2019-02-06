@@ -61,3 +61,12 @@ Topic partition assignments could even be managed this way. When a topic is crea
 It would also be interesting to support DML-like features such as inserting or deleting messages into specific topics. I've seen this need several times, and it usually ends with SREs running a one-off script, or using the [kafka-console-producer.sh](https://kafka.apache.org/quickstart#quickstart_send) to get messages where they need to be. Having these changes revision controlled and tracked as part of the topic's configuration would be quite useful.
 
 Most companies seem to solve these problems in house, and I haven't seen much tooling make its way into the open source ecosystem. If you're aware of any, please let me know. If not, perhaps this post will inspire a new tool set for Kafka topic configuration management.
+
+## Update
+
+Some great conversation popped up on Twitter. Here a list of tools that exist in this area:
+
+* [Stream Registry](https://homeaway.github.io/stream-registry/)
+* [Kafka Security Manager](https://github.com/simplesteph/kafka-security-manager)
+* [Kafkawize](https://github.com/kafkawize/kafkawize)
+* [Terraform Kafka Provider](https://github.com/Mongey/terraform-provider-kafka#kafka_topic)
