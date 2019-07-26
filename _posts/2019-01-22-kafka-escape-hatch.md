@@ -3,8 +3,6 @@ layout: post
 title:  "Kafka is your escape hatch"
 author: chris
 categories: [ kafka, distributed-systems ]
-featured: true
-hidden: true
 image: assets/images/2019-01-22-kafka-escape-hatch/chris-barbalis-705864-unsplash.jpg
 ---
 
