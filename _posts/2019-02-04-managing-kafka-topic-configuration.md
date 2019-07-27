@@ -3,8 +3,6 @@ layout: post
 title:  "Managing Kafka topic configuration"
 author: chris
 categories: [ kafka, distributed-systems ]
-featured: true
-hidden: true
 image: assets/images/2019-02-04-managing-kafka-topic-configuration/beatriz-perez-moya-111685-unsplash.jpg
 ---
 
