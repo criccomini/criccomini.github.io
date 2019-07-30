@@ -19,6 +19,8 @@ The industry is working through changes in how these systems are built and manag
 * Centralization: From centrally managed to self-serve tooling
 * Automation: From manually managed or automated tooling
 
+{% include newsletter.html %}
+
 ## From batch to realtime
 Both data pipelines and data processing have been batch-based in the past. Data was transported between systems in batch ETL snapshots, and data was processed in a periodic cadence, which was managed by a job scheduler (Airflow, Oozie, Azkaban, Luigi).
 
