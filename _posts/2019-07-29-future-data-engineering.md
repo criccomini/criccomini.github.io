@@ -17,7 +17,7 @@ The industry is working through changes in how these systems are built and manag
 * Timeliness: From batch to realtime
 * Connectivity: From one:one bespoke integrations to many:many
 * Centralization: From centrally managed to self-serve tooling
-* Automation: From manually managed or automated tooling
+* Automation: From manually managed to automated tooling
 
 {% include newsletter.html %}
 
@@ -53,7 +53,7 @@ The last two items in my list, automation and centralization, really go hand-in 
 
 In my experience, a centralized team will usually have some automation, but it will be mostly focused on technical automation. This is natural, as it’s more in an engineering team’s wheel house. This kind of work usually means replacing operational [toil](https://landing.google.com/sre/sre-book/chapters/eliminating-toil/) with automation; activities like adding a new connector, setting up monitoring or data quality checks, creating a new database or table, granting permission, and so on.
 
-There is, however, a second type of toil that I believe data engineering has not yet automated: policy toil.  This kind of drudgery involves making decision about who can have access to what data, how long data should be persisted, what kind of sensitive data is allowed to be in which data systems, and in which geographies data may reside. Data engineering is usually not the team that ultimately decides the answers to these questions, but they often must act as a liason or driver when finding the answers. This usually means navingating requests through other parts of the organization such as security, compliance, and legal.
+There is, however, a second type of toil that I believe data engineering has not yet automated: policy toil.  This kind of drudgery involves making decision about who can have access to what data, how long data should be persisted, what kind of sensitive data is allowed to be in which data systems, and in which geographies data may reside. Data engineering is usually not the team that ultimately decides the answers to these questions, but they often must act as a liason or driver when finding the answers. This usually means navigating requests through other parts of the organization such as security, compliance, and legal.
 
 This kind of work is already important because of regulation such as [GDPR](https://eugdpr.org/) and [CCPA](https://www.caprivacy.org/). If I add government regulation to the ongoing expansion of tech beyond traditional software companies, and into areas such as health and finance (see [Why Software Is Eating the World](https://a16z.com/2011/08/20/why-software-is-eating-the-world/)), it is inevitable that the importance of automating policy toil will only grow.
 
