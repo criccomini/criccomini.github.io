@@ -8,6 +8,8 @@ hidden: true
 image: assets/images/2019-07-29-future-data-engineering/mathilda-khoo-HLA3TAFQuQs-unsplash.jpg
 ---
 
+_I presented an expanded version of this blog post for QCon SF 2019. The video of the talk is available [here](https://www.infoq.com/presentations/data-engineering-pipelines-warehouses)._
+
 I have been thinking lately about where we’ve come in data engineering over the past few years, and about what the future holds for work in this area. Most of this thought has been framed in the context of what some of our teams are doing at WePay, but I believe the framework below applies more broadly, and is worth sharing.
 
 Data engineering’s job is to help an organization move and process data. This generally requires two different systems, broadly speaking: a data pipeline, and a data warehouse. The data pipeline is responsible for moving the data, and the data warehouse is responsible for processing it. I acknowledge that this is a bit overly simplistic. You can do processing in the pipeline itself by doing transformations between extraction and loading with batch and stream processing. The “data warehouse” now includes many storage and processing systems (Flink, Spark, Presto, Hive, BigQuery, Redshift, etc), as well as auxiliary systems such as data catalogs, job schedulers, and so on. Still, I believe the paradigm holds.
