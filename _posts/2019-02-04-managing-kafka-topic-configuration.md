@@ -68,3 +68,5 @@ Some great conversation popped up on Twitter. Here a list of tools that exist in
 * [Kafka Security Manager](https://github.com/simplesteph/kafka-security-manager)
 * [Kafkawize](https://github.com/kafkawize/kafkawize)
 * [Terraform Kafka Provider](https://github.com/Mongey/terraform-provider-kafka#kafka_topic)
+* [Kafka Helmsman](https://github.com/teslamotors/kafka-helmsman/tree/master/kafka_topic_enforcer)
+* [Topicctl](https://github.com/segmentio/topicctl)
