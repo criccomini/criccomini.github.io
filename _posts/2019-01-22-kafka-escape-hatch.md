@@ -4,6 +4,8 @@ title:  "Kafka is your escape hatch"
 author: chris
 categories: [ kafka, distributed-systems ]
 image: assets/images/2019-01-22-kafka-escape-hatch/chris-barbalis-705864-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/kafka-escape-hatch
 ---
 
 I've become much more comfortable with the idea of vendor lock-in. Or rather, I don't feel as locked in as I used to. The odd thing is, I'm using more proprietary systems than I ever have before (thanks to the cloud). Apache Kafka is what's making me comfortable. Specifically, Kafka connect.

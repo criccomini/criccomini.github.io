@@ -4,6 +4,8 @@ title:  "Trust, but automate"
 author: chris
 categories: [ devops ]
 image: assets/images/2017-09-11-trust-but-automate/chad-kirchoff-202730-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/trust-but-automate
 ---
 
 If you want to enforce a technical guideline or rule, you must automate the enforcement mechanism. Relying on human beings to do the enforcement is too error prone, yet this is exactly the pattern that I see pop up again and again.

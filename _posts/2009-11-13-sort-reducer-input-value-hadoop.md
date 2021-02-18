@@ -6,6 +6,8 @@ categories: [ distributed-systems, hadoop ]
 image: assets/images/2009-11-13-sort-reducer-input-value-hadoop/hadoop-logo-png-transparent.png
 redirect_from:
   - /posts/hadoop/2009-11-13-sort-reducer-input-value-hadoop/
+redirect_to:
+  - https://cnr.sh/essays/sort-reducer-input-value-hadoop
 ---
 
 I HIGHLY recommend that you read the email thread by [Owen O'Malley](http://markmail.org/message/7gonm3kiasyh2xnf#query:setOutputKeyComparatorClass+page:3+mid:esn3lgzyx3ag26cy+state:results) that describes this technique in brief. I should also note that this example is using the 0.18 Hadoop API. 

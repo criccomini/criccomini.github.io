@@ -4,6 +4,8 @@ title:  "Choosing where to work"
 author: chris
 categories: [ engineering-field-manual ]
 image: assets/images/2017-08-21-choosing-where-to-work/lycs-lycs-744230-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/choosing-where-to-work
 ---
 
 Making the right decision about where to work can have a profound effect on one’s life. A company needs to want you to join, but you also need to want to join. I’ve had a few people ask for advice on taking a new job recently, so I thought it might be useful to others to write down my thoughts.

@@ -4,6 +4,8 @@ title:  "Kafka change data capture breaks database encapsulation"
 author: chris
 categories: [ kafka, distributed-systems ]
 image: assets/images/2018-11-05-kafka-change-data-capture-breaks-database-encapsulation/bjorn-kamfjord-379952-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/kafka-change-data-capture-breaks-database-encapsulation
 ---
 
 Realtime [change data capture](https://en.wikipedia.org/wiki/Change_data_capture) (CDC) is becoming a popular architecture for [data integration](https://en.wikipedia.org/wiki/Data_integration) and [data pipelines](https://en.wikipedia.org/wiki/Pipeline_(computing)). The rise of [Kafka connect](https://docs.confluent.io/current/connect/index.html), in particular, has triggered a lot of interest in the subject. In realtime CDC, a database's changes (inserts, updates, and deletes) are available as a stream of mutations for downstream consumers to tail. This architecture is showing up a lot in modern ETL and data integration implementations, and it has a number of advantages:

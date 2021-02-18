@@ -5,6 +5,8 @@ author: chris
 image: assets/images/2012-09-29-streaming-live-sports-schedule-scores-stats-api/jason-weingardt-340014-unsplash.jpg
 redirect_from:
   - /posts/game-time-baby/2012-09-29-streaming-live-sports-schedule-scores-stats-api/
+redirect_to:
+  - https://cnr.sh/essays/streaming-live-sports-schedule-scores-stats-api
 ---
 
 Recently, I've been looking for an API that exposes schedules and scores for "the big four" American leagues. Here's what I was looking for:

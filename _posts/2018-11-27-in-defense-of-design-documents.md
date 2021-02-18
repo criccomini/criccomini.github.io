@@ -4,6 +4,8 @@ title:  "In defense of design documents"
 author: chris
 categories: [ engineering-field-manual ]
 image: assets/images/2018-11-27-in-defense-of-design-documents/annie-spratt-746981-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/in-defense-of-design-documents
 ---
 
 Design documents aren't just a chore; something that you begrudgingly slog through before getting to the fun work of writing code. Writing a design document might be challenging, but it should be a productive exercise that gets everyone on the same page. Let's start with what a design document is.

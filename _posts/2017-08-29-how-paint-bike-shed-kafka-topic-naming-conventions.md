@@ -4,6 +4,8 @@ title:  "How to paint a bike shed: Kafka topic naming conventions"
 author: chris
 categories: [ kafka ]
 image: assets/images/2017-08-29-how-paint-bike-shed-kafka-topic-naming-conventions/bike-shed.jpg
+redirect_to:
+  - https://cnr.sh/essays/how-paint-bike-shed-kafka-topic-naming-conventions
 ---
 
 Today, I'll be tackling the controversial subject of [Kafka](https://kafka.apache.org/) topic names. Not only will I review various schemes, but I've decided to take a stand on a few issues and outline my reasoning. Get out your brush, and let's [paint this bike shed](https://en.wiktionary.org/wiki/bikeshedding)!

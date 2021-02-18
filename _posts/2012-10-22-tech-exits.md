@@ -5,6 +5,8 @@ author: chris
 image: assets/images/2012-10-22-tech-exits/jacob-townsend-771573-unsplash.jpg
 redirect_from:
   - /posts/hadoop/2013-06-14-yarn-with-cgroups/
+redirect_to:
+  - https://cnr.sh/essays/tech-exits
 ---
 
 What follows is a brain dump of some things that I've learned about the way that software companies are sold on the public and private market.

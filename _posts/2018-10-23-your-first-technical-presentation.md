@@ -4,6 +4,8 @@ title:  "Your First Technical Presentation"
 author: chris
 categories: [ presentations, engineering-field-manual ]
 image: assets/images/2018-10-23-your-first-technical-presentation/matthias-wagner-679540-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/your-first-technical-presentation
 ---
 
 Congratulations! You've been picked you to give a technical presentation. People are interested in what you have to say, and you're excited and nervous. What now?

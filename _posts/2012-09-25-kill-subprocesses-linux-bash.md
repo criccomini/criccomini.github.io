@@ -6,6 +6,8 @@ categories: [ devops, distributed-systems ]
 image: assets/images/2012-09-25-kill-subprocesses-linux-bash/jon-tyson-478928-unsplash.jpg
 redirect_from:
   - /posts/linux/2012-09-25-kill-subprocesses-linux-bash/
+redirect_to:
+  - https://cnr.sh/essays/kill-subprocesses-linux-bash
 ---
 
 Lately, I've been working with [YARN](http://hadoop.apache.org/docs/r0.23.0/hadoop-yarn/hadoop-yarn-site/YARN.html) at LinkedIn. This framework allows you to execute Bash scripts on one or more machines. It's used primarily for Hadoop. When using YARN, you often end up with nested Bash scripts with no parent process ID (PPID) when the NodeManager launches the Bash script. This can be pretty problematic when the NodeManager is shut down, since you must make sure to clean up all child subprocesses via your parent Bash script.

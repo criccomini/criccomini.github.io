@@ -4,6 +4,8 @@ title:  "Models and microservices should be running on the same continuous deliv
 author: chris
 categories: [ devops, machine-learning ]
 image: assets/images/2018-10-29-models-microservices-should-be-using-same-continuous-delivery-stack/rawpixel-782053-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/models-microservices-should-be-using-same-continuous-delivery-stack
 ---
 
 I've been interested in data science platforms for a long time. My fascination began when I was at LinkedIn, and helped build out the first model building and deployment system for [People You May Know](https://engineering.linkedin.com/teams/data/projects/pymk). At the time, we did feature engineering and training on [Hadoop](https://hadoop.apache.org/), job scheduling on [Azkaban](https://azkaban.github.io/), and model deployment on [Voldemort](https://www.project-voldemort.com/voldemort/).

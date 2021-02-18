@@ -4,6 +4,8 @@ title:  "Research in cell, animal, and human software simulation can speed up ex
 author: chris
 categories: [ machine-learning ]
 image: assets/images/2019-01-15-research-cell-animal-human-software-simulation-speed-up-experimentation/louis-reed-747388-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/research-cell-animal-human-software-simulation-speed-up-experimentation
 ---
 
 I recently came across a [Wired story about Jim Allison](https://www.wired.com/story/meet-jim-allison-the-texan-who-just-won-a-nobel-cancer-breakthrough/), a Nobel Prize winning researcher in cancer immunotherapy. The story is a long form piece that's half character study, and half high-level biology. The article sparked my interest. Specifically, how engineering might be able to accelerate the way in which medical research is conducted.

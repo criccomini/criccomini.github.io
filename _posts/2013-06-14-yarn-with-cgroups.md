@@ -5,6 +5,8 @@ author: chris
 image: assets/images/2013-06-14-yarn-with-cgroups/terra-evans-721293-unsplash.jpg
 redirect_from:
   - /posts/hadoop/2013-06-14-yarn-with-cgroups/
+redirect_to:
+  - https://cnr.sh/essays/yarn-with-cgroups
 ---
 
 I'm still a novice with Cgroups, but I thought it would be worth documenting how to set YARN up with them, since there seems to be a surprising lack of documentation on how to get this stuff going. I'm going to show you how to:

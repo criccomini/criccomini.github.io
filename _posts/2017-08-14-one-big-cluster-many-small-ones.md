@@ -4,6 +4,8 @@ title:  "One big cluster, or many small ones?"
 author: chris
 categories: [ devops, distributed-systems ]
 image: assets/images/2017-08-14-one-big-cluster-many-small-ones/john-barkiple-539580-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/one-big-cluster-many-small-ones
 ---
 
 I bumped into something recently that seems to recur at every company I work for. Should we run one big cluster, or many smaller ones? The discussion is usually triggered when you have more than one team that wants to use the infrastructure in question.

@@ -4,6 +4,8 @@ title:  "Managing Kafka topic configuration"
 author: chris
 categories: [ kafka, distributed-systems ]
 image: assets/images/2019-02-04-managing-kafka-topic-configuration/beatriz-perez-moya-111685-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/managing-kafka-topic-configuration
 ---
 
 The lack of tooling available for managing Kafka topic configuration has been in the back of my mind for a while. It seems like a fairly obvious need, but there doesn't appear to be much available. Unsurprisingly, I'm not the only person to recognize this need:

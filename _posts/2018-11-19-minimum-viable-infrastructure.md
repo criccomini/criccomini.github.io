@@ -4,6 +4,8 @@ title:  "Minimum viable infrastructure"
 author: chris
 categories: [ distributed-systems, engineering-field-manual ]
 image: assets/images/2018-11-19-minimum-viable-infrastructure/nick-grant-705798-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/minimum-viable-infrastructure
 ---
 
 We've been discussing building some new infrastructure at work. The project involves writing some fresh code and interfacing with some other systems that we've never used before. There are a lot of unknowns. During a discussion about the project, I found myself making the statement, **"Your goal is to build the smallest amount of the system while still providing value to at least one user."**

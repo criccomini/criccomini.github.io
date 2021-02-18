@@ -6,6 +6,8 @@ categories: [ distributed-systems, kafka ]
 image: assets/images/2012-10-05-kafka-consumer-memory-tuning/rawpixel-741689-unsplash.jpg
 redirect_from:
   - /posts/kafka/2012-10-05-kafka-consumer-memory-tuning/
+redirect_to:
+  - https://cnr.sh/essays/kafka-consumer-memory-tuning
 ---
 
 Yesterday, I had a process that was consuming a single Kafka topic. I was running it in our "staging" environment, and everything worked great. My heap space for the process was set to 512 megabytes (`-Xmx512M`). When I moved this process to production, my process would fail with an out of memory exception. I was seeing:

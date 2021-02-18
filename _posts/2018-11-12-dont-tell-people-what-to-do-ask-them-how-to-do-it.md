@@ -4,6 +4,8 @@ title:  "Don't tell people what to do, ask them how to do it"
 author: chris
 categories: [ devops, engineering-field-manual ]
 image: assets/images/2018-11-12-dont-tell-people-what-to-do-ask-them-how-to-do-it/kaleidico-754613-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/dont-tell-people-what-to-do-ask-them-how-to-do-it
 ---
 
 When I first joined LinkedIn, there was very little automation in production deployments. Believe it or not, each deployment day had a wiki page with a run book of all the services that needed to be deployed, complete with configuration changes that needed to be executed. Roll outs happened on Thursday evenings, and the entire site was brought offline during the deployments. Metrics and monitoring weren't much better. We had very limited visibility into metrics and logs. Obviously, this caused a bunch of problems for the engineers. For one thing, it meant that we had to rely heavily on the operations staff anytime we needed to do just about anything.

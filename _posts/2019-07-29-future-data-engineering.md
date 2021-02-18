@@ -6,6 +6,8 @@ categories: [ kafka, machine-learning, data-engineering ]
 featured: true
 hidden: true
 image: assets/images/2019-07-29-future-data-engineering/mathilda-khoo-HLA3TAFQuQs-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/future-data-engineering
 ---
 
 _I presented an expanded version of this blog post for QCon SF 2019. The video of the talk is available [here](https://www.infoq.com/presentations/data-engineering-pipelines-warehouses)._

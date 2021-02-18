@@ -6,6 +6,8 @@ categories: [ devops ]
 featured: true
 hidden: true
 image: assets/images/2019-02-19-yes-you-still-need-qa-team-not-for-writing-tests/simson-petrol-133138-unsplash.jpg
+redirect_to:
+  - https://cnr.sh/essays/yes-you-still-need-qa-team-not-for-writing-tests
 ---
 
 I was having lunch with a friend of mine recently where we were talking about a discussion he'd been having with a [QA](https://en.wikipedia.org/wiki/Quality_assurance#Software_development) manager that he was interviewing. The discussion was about the role of QA in a modern engineering organization. The candidate had responded that they viewed their role like that of security. I found this really thought provoking, and I want to unpack it a little bit.
