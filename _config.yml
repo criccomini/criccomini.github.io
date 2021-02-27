@@ -25,23 +25,8 @@ authors:
 
 # Plugins
 plugins: 
-  - jekyll-archives
   - jekyll-redirect-from
-  - jekyll-sitemap
-  - jekyll-feed
 
-# Archives
-jekyll-archives:
-  enabled:
-    - categories
-  layout: archive
-  permalinks:
-    category: '/category/:name/'
-    
-# Pagination 
-paginate: 6
-paginate_path: /page:num/
-    
 # Other
 markdown: kramdown
 highlighter: rouge
